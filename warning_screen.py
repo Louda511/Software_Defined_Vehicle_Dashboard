@@ -1,30 +1,65 @@
 import json
-from PyQt6.QtWidgets import QDialog, QVBoxLayout, QLabel, QApplication
-from PyQt6.QtGui import QFont
+from PyQt6.QtWidgets import QDialog, QVBoxLayout, QLabel, QApplication, QHBoxLayout, QPushButton, QDialogButtonBox, QWidget
+from PyQt6.QtGui import QFont, QPixmap, QIcon
 from PyQt6.QtCore import Qt, QFileSystemWatcher, QObject, QTimer
 import sys
 
 class WarningScreen(QDialog):
-    def __init__(self, message, parent=None):
+    def __init__(self, main_message, advice_message, parent=None):
         super().__init__(parent)
         self.setWindowTitle('Warning!')
         self.setModal(True)
         self.setMinimumWidth(400)
         layout = QVBoxLayout()
-        self.label = QLabel(message)
-        self.label.setFont(QFont('Segoe UI', 16, QFont.Weight.Bold))
-        self.label.setAlignment(Qt.AlignmentFlag.AlignCenter)
-        self.label.setWordWrap(True)
-        layout.addWidget(self.label)
+        # Header
+        header = QWidget()
+        header_layout = QHBoxLayout()
+        header.setStyleSheet('background-color: #e53935; border-top-left-radius: 8px; border-top-right-radius: 8px;')
+        icon_label = QLabel()
+        icon_label.setPixmap(QPixmap(16, 16))  # Placeholder for icon
+        icon_label.setText('⚠️')
+        icon_label.setFont(QFont('Segoe UI', 16, QFont.Weight.Bold))
+        icon_label.setStyleSheet('color: white;')
+        header_layout.addStretch()
+        header_layout.addWidget(icon_label, alignment=Qt.AlignmentFlag.AlignCenter)
+        caution_label = QLabel('CAUTION')
+        caution_label.setFont(QFont('Segoe UI', 14, QFont.Weight.Bold))
+        caution_label.setStyleSheet('color: white; margin-left: 8px;')
+        header_layout.addWidget(caution_label, alignment=Qt.AlignmentFlag.AlignCenter)
+        header_layout.addStretch()
+        header.setLayout(header_layout)
+        layout.addWidget(header)
+        # Main message
+        self.main_label = QLabel(main_message)
+        self.main_label.setFont(QFont('Segoe UI', 15, QFont.Weight.Bold))
+        self.main_label.setAlignment(Qt.AlignmentFlag.AlignCenter)
+        self.main_label.setWordWrap(True)
+        layout.addWidget(self.main_label)
+        # Advice message
+        self.advice_label = QLabel(advice_message)
+        self.advice_label.setFont(QFont('Segoe UI', 11))
+        self.advice_label.setAlignment(Qt.AlignmentFlag.AlignCenter)
+        self.advice_label.setWordWrap(True)
+        layout.addWidget(self.advice_label)
         self.setLayout(layout)
-    def set_message(self, message):
-        self.label.setText(message)
+    def set_message(self, main_message, advice_message):
+        self.main_label.setText(main_message)
+        self.advice_label.setText(advice_message)
 
-# Map parameter to warning message
+# Map parameter to warning messages: (main, advice)
 WARNING_MESSAGES = {
-    'drowsy': 'Drowsiness detected! Please stay alert.',
-    'distracted': 'Distraction detected! Please focus on the road.',
-    'yawning': 'Yawning detected! Please take a break if needed.'
+    'drowsy': (
+        'Drowsiness Detected!',
+        'Please stay alert and take a break if needed.'
+    ),
+    'distracted': (
+        'Distraction Detected!',
+        'Please focus on the road and avoid distractions.'
+    ),
+    'yawning': (
+        'Yawning Detected!',
+        'Consider taking a break to rest.'
+    )
 }
 
 def get_active_warning(json_path):
@@ -67,12 +102,14 @@ class WarningFileWatcher(QObject):
     def update_warning(self):
         warning_key = get_active_warning(self.json_path)
         if warning_key:
-            message = WARNING_MESSAGES.get(warning_key, 'Warning detected!')
+            main_msg, advice_msg = WARNING_MESSAGES.get(
+                warning_key, ('Warning detected!', '')
+            )
             if self.dialog is None:
-                self.dialog = WarningScreen(message, self.parent)
+                self.dialog = WarningScreen(main_msg, advice_msg, self.parent)
                 self.dialog.show()
             else:
-                self.dialog.set_message(message)
+                self.dialog.set_message(main_msg, advice_msg)
             self.last_warning_key = warning_key
         else:
             if self.dialog is not None:

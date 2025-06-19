@@ -91,7 +91,7 @@ class PodmanWorker(QThread):
             pull_cmd = ['podman', 'pull', self.image_name]
             subprocess.run(pull_cmd, check=True, capture_output=True)
             self.status_update.emit('Running container with Podman...')
-            run_cmd = ['podman', 'run', '-d', '--rm', self.image_name, 'sleep', 'infinity']
+            run_cmd = ['podman', 'run', '-d', '--rm', '--name', self.image_name, 'sleep', 'infinity']
             subprocess.run(run_cmd, check=True, capture_output=True)
             self.status_update.emit('Done!')
             self.finished.emit(True, 'Container ran successfully.')
