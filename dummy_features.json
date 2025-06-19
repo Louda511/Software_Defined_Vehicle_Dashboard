@@ -3,7 +3,7 @@
         "name": "Lane Keep Assist",
         "icon": "resources/icons/lane.png",
         "short_desc": "Keeps your car in lane.",
-        "long_desc": "Lane Keep Assist uses cameras to detect lane markings and gently steers the car to keep it centered in the lane.",
+        "long_desc": "Keeps your car in lane Lane Keep Assist uses cameras to detect lane markings and gently steers the car to keep it centered in the lane.",
         "location": "https://hub.docker.com/r/example/lane-keep-assist"
     },
     {
@@ -21,7 +21,7 @@
         "location": "https://hub.docker.com/r/example/automatic-emergency-braking"
     },
     {
-        "name": "Hello World",
+        "name": "Alpine Linux",
         "icon": "resources/icons/hello.png",
         "short_desc": "The simplest Docker container.",
         "long_desc": "This is the official Docker hello-world image. It is used to verify that Docker is installed and working correctly.",

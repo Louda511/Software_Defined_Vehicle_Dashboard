@@ -1,6 +1,7 @@
 import sys
 import webbrowser
 import json
+import os
 from PyQt6.QtWidgets import (
     QApplication, QWidget, QVBoxLayout, QGridLayout, QLabel, QPushButton, QDialog, QDialogButtonBox, QScrollArea, QHBoxLayout, QFrame
 )
@@ -8,12 +9,28 @@ from PyQt6.QtGui import QPixmap, QFont
 from PyQt6.QtCore import Qt, QThread, pyqtSignal
 from warning_screen import WarningFileWatcher
 
+INSTALLED_FILE = 'installed_images.json'
+
+def load_installed_images():
+    if os.path.exists(INSTALLED_FILE):
+        try:
+            with open(INSTALLED_FILE, 'r') as f:
+                return set(json.load(f))
+        except Exception:
+            return set()
+    return set()
+
+def save_installed_images(installed_set):
+    with open(INSTALLED_FILE, 'w') as f:
+        json.dump(list(installed_set), f)
+
 # Load features from JSON file
 def load_features():
     with open('dummy_features.json', 'r') as f:
         return json.load(f)
 
 dummy_features = load_features()
+installed_images = load_installed_images()
 
 class FeatureDialog(QDialog):
     def __init__(self, feature, parent=None):
@@ -56,13 +73,15 @@ class DownloadInstallDialog(QDialog):
     def set_status(self, text):
         self.status_label.setText(text)
 
-    def start_worker(self, url, main_window):
+    def start_worker(self, url, main_window, on_finish_callback=None):
         self.worker = PodmanWorker(url)
         self.worker.status_update.connect(self.set_status)
         def on_finish(success, msg):
             self.set_status(msg)
             self.accept()
             main_window.show()
+            if on_finish_callback:
+                on_finish_callback(success)
         self.worker.finished.connect(on_finish)
         self.worker.start()
 
@@ -91,7 +110,7 @@ class PodmanWorker(QThread):
             pull_cmd = ['podman', 'pull', self.image_name]
             subprocess.run(pull_cmd, check=True, capture_output=True)
             self.status_update.emit('Running container with Podman...')
-            run_cmd = ['podman', 'run', '-d', '--rm', '--name', self.image_name, 'sleep', 'infinity']
+            run_cmd = ['podman', 'run', '-d', '--rm', '--name', self.image_name, self.image_name, 'sleep', 'infinity']
             subprocess.run(run_cmd, check=True, capture_output=True)
             self.status_update.emit('Done!')
             self.finished.emit(True, 'Container ran successfully.')
@@ -142,11 +161,27 @@ class FeatureCard(QFrame):
         info_btn = QPushButton('More Info')
         info_btn.clicked.connect(self.show_info)
         btn_layout.addWidget(info_btn)
-        download_btn = QPushButton('Download')
-        download_btn.clicked.connect(self.download_feature)
-        btn_layout.addWidget(download_btn)
+        self.download_btn = QPushButton('Download')
+        self.download_btn.clicked.connect(self.download_feature)
+        btn_layout.addWidget(self.download_btn)
         layout.addLayout(btn_layout)
         self.setLayout(layout)
+        # Set installed state if already installed
+        self.image_name = self.extract_image_name(feature.get('location', ''))
+        if self.image_name in installed_images:
+            self.set_installed()
+
+    def extract_image_name(self, url):
+        if '/_/' in url:
+            return url.split('/_/')[-1]
+        elif '/r/' in url:
+            return url.split('/r/')[-1]
+        return url.split('/')[-1]
+
+    def set_installed(self):
+        self.download_btn.setText('Installed')
+        self.download_btn.setEnabled(False)
+
     def show_info(self):
         dlg = FeatureDialog(self.feature, self)
         dlg.exec()
@@ -156,8 +191,13 @@ class FeatureCard(QFrame):
             main_window = self.window()
             main_window.hide()
             dlg = DownloadInstallDialog(url, main_window)
-            dlg.start_worker(url, main_window)
-        dlg.exec()
+            def after_install(success):
+                if success:
+                    installed_images.add(self.image_name)
+                    save_installed_images(installed_images)
+                    self.set_installed()
+            dlg.start_worker(url, main_window, on_finish_callback=after_install)
+            dlg.exec()
 
 class Dashboard(QWidget):
     def __init__(self):
