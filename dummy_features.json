@@ -1,0 +1,30 @@
+[
+    {
+        "name": "Lane Keep Assist",
+        "icon": "resources/icons/lane.png",
+        "short_desc": "Keeps your car in lane.",
+        "long_desc": "Lane Keep Assist uses cameras to detect lane markings and gently steers the car to keep it centered in the lane.",
+        "location": "https://hub.docker.com/r/example/lane-keep-assist"
+    },
+    {
+        "name": "Adaptive Cruise Control",
+        "icon": "resources/icons/cruise.png",
+        "short_desc": "Automatic speed & distance.",
+        "long_desc": "Adaptive Cruise Control automatically adjusts your speed to maintain a safe distance from vehicles ahead.",
+        "location": "https://hub.docker.com/r/example/adaptive-cruise-control"
+    },
+    {
+        "name": "Automatic Emergency Braking",
+        "icon": "resources/icons/brake.jpg",
+        "short_desc": "Brakes in emergencies.",
+        "long_desc": "Automatic Emergency Braking detects imminent collisions and applies the brakes to prevent or reduce impact.",
+        "location": "https://hub.docker.com/r/example/automatic-emergency-braking"
+    },
+    {
+        "name": "Hello World",
+        "icon": "resources/icons/hello.png",
+        "short_desc": "The simplest Docker container.",
+        "long_desc": "This is the official Docker hello-world image. It is used to verify that Docker is installed and working correctly.",
+        "location": "https://hub.docker.com/_/alpine"
+    }
+] 

@@ -1,42 +1,19 @@
 import sys
 import webbrowser
+import json
 from PyQt6.QtWidgets import (
     QApplication, QWidget, QVBoxLayout, QGridLayout, QLabel, QPushButton, QDialog, QDialogButtonBox, QScrollArea, QHBoxLayout, QFrame
 )
 from PyQt6.QtGui import QPixmap, QFont
 from PyQt6.QtCore import Qt, QThread, pyqtSignal
+from warning_screen import WarningFileWatcher
 
-# Dummy data for ADAS features
-dummy_features = [
-    {
-        'name': 'Lane Keep Assist',
-        'icon': 'resources/icons/lane.png',
-        'short_desc': 'Keeps your car in lane.',
-        'long_desc': 'Lane Keep Assist uses cameras to detect lane markings and gently steers the car to keep it centered in the lane.',
-        'location': 'https://hub.docker.com/r/example/lane-keep-assist'
-    },
-    {
-        'name': 'Adaptive Cruise Control',
-        'icon': 'resources/icons/cruise.png',
-        'short_desc': 'Automatic speed & distance.',
-        'long_desc': 'Adaptive Cruise Control automatically adjusts your speed to maintain a safe distance from vehicles ahead.',
-        'location': 'https://hub.docker.com/r/example/adaptive-cruise-control'
-    },
-    {
-        'name': 'Automatic Emergency Braking',
-        'icon': 'resources/icons/brake.png',
-        'short_desc': 'Brakes in emergencies.',
-        'long_desc': 'Automatic Emergency Braking detects imminent collisions and applies the brakes to prevent or reduce impact.',
-        'location': 'https://hub.docker.com/r/example/automatic-emergency-braking'
-    },
-    {
-        'name': 'Hello World',
-        'icon': 'resources/icons/hello.png',
-        'short_desc': 'The simplest Docker container.',
-        'long_desc': 'This is the official Docker hello-world image. It is used to verify that Docker is installed and working correctly.',
-        'location': 'https://hub.docker.com/_/alpine'
-    },
-]
+# Load features from JSON file
+def load_features():
+    with open('dummy_features.json', 'r') as f:
+        return json.load(f)
+
+dummy_features = load_features()
 
 class FeatureDialog(QDialog):
     def __init__(self, feature, parent=None):
@@ -180,7 +157,7 @@ class FeatureCard(QFrame):
             main_window.hide()
             dlg = DownloadInstallDialog(url, main_window)
             dlg.start_worker(url, main_window)
-            dlg.exec()
+        dlg.exec()
 
 class Dashboard(QWidget):
     def __init__(self):
@@ -211,6 +188,8 @@ def main():
     app = QApplication(sys.argv)
     dashboard = Dashboard()
     dashboard.show()
+    # Integrate warning screen watcher
+    watcher = WarningFileWatcher('resources/results.json', dashboard)
     sys.exit(app.exec())
 
 if __name__ == '__main__':
