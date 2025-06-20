@@ -14,7 +14,11 @@ NIGHT_THEME = {
     'border': '#414868',          # A visible but not jarring border
     'success': '#198754',
     'alert_color': '#E06B74',      # A soft red for alerts
-    'alert_text_color': '#1A1B26'  # Use the main background for high contrast
+    'alert_text_color': '#1A1B26',  # Use the main background for high contrast
+    'alert_btn_bg': '#292B3D',
+    'alert_btn_bg_hover': '#414868',
+    'alert_btn_border': '#414868',
+    'alert_btn_text': '#C0CAF5'
 }
 
 # A clean, low-contrast day theme for reduced glare.
@@ -28,7 +32,11 @@ DAY_THEME = {
     'border': '#E2E8F0',          # A very light, subtle border
     'success': '#28a745',
     'alert_color': '#E53935',      # A standard, clear red for alerts
-    'alert_text_color': '#FFFFFF'  # White text for high contrast
+    'alert_text_color': '#FFFFFF',  # White text for high contrast
+    'alert_btn_bg': '#E2E8F0',
+    'alert_btn_bg_hover': '#CBD5E0',
+    'alert_btn_border': '#CBD5E0',
+    'alert_btn_text': '#2D3748'
 }
 
 

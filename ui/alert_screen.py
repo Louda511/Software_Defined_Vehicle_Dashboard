@@ -1,8 +1,7 @@
 """
 Alert dialog UI for displaying system warnings
 """
-from PyQt6.QtWidgets import QDialog, QVBoxLayout, QLabel, QWidget, QHBoxLayout
-from PyQt6.QtGui import QFont
+from PyQt6.QtWidgets import QDialog, QVBoxLayout, QLabel, QWidget, QHBoxLayout, QPushButton
 from PyQt6.QtCore import Qt
 from ui.styles import theme_manager
 
@@ -10,9 +9,10 @@ class AlertScreen(QDialog):
     """A themed dialog for displaying alerts."""
     def __init__(self, main_message: str, advice_message: str, parent=None):
         super().__init__(parent)
-        self.setWindowTitle('Warning!')
+        self.setWindowFlags(Qt.WindowType.FramelessWindowHint | Qt.WindowType.Dialog)
+        self.setAttribute(Qt.WidgetAttribute.WA_TranslucentBackground)
         self.setModal(True)
-        self.setMinimumWidth(450)
+        self.setMinimumWidth(500)
         
         self.main_message = main_message
         self.advice_message = advice_message
@@ -24,32 +24,31 @@ class AlertScreen(QDialog):
     def _setup_ui(self):
         """Setup the alert screen UI"""
         self.setObjectName("AlertScreen")
-        main_layout = QVBoxLayout()
+        container = QWidget()
+        container.setObjectName("Container")
+        
+        main_layout = QVBoxLayout(self)
         main_layout.setContentsMargins(0, 0, 0, 0)
-        main_layout.setSpacing(0)
+        main_layout.addWidget(container)
+        
+        layout = QVBoxLayout(container)
+        layout.setContentsMargins(0, 0, 0, 0)
+        layout.setSpacing(0)
 
         # Header
         header = QWidget()
         header.setObjectName("AlertHeader")
-        header_layout = QHBoxLayout()
-        
-        icon_label = QLabel('⚠️')
-        icon_label.setObjectName("AlertIcon")
-        
+        header_layout = QHBoxLayout(header)
         caution_label = QLabel('CAUTION')
         caution_label.setObjectName("AlertHeaderText")
-        
-        header_layout.addStretch()
-        header_layout.addWidget(icon_label)
+        caution_label.setAlignment(Qt.AlignmentFlag.AlignCenter)
         header_layout.addWidget(caution_label)
-        header_layout.addStretch()
-        header.setLayout(header_layout)
         
         # Body
         body = QWidget()
         body.setObjectName("AlertBody")
-        body_layout = QVBoxLayout()
-        body_layout.setContentsMargins(20, 20, 20, 20)
+        body_layout = QVBoxLayout(body)
+        body_layout.setContentsMargins(30, 25, 30, 25)
         
         self.main_label = QLabel(self.main_message)
         self.main_label.setObjectName("AlertMainText")
@@ -61,55 +60,66 @@ class AlertScreen(QDialog):
         self.advice_label.setAlignment(Qt.AlignmentFlag.AlignCenter)
         self.advice_label.setWordWrap(True)
 
+        # Button
+        self.ok_button = QPushButton("OK")
+        self.ok_button.setObjectName("OkButton")
+        self.ok_button.clicked.connect(self.accept)
+        
         body_layout.addWidget(self.main_label)
         body_layout.addWidget(self.advice_label)
-        body.setLayout(body_layout)
+        body_layout.addSpacing(20)
+        body_layout.addWidget(self.ok_button, alignment=Qt.AlignmentFlag.AlignCenter)
         
-        main_layout.addWidget(header)
-        main_layout.addWidget(body)
-        self.setLayout(main_layout)
+        layout.addWidget(header)
+        layout.addWidget(body)
 
     def update_styles(self):
         """Apply styles from the theme manager."""
         theme = theme_manager.theme
-        border_radius = theme.get('border_radius', '8px')
+        border_radius = "12px"
         self.setStyleSheet(f"""
-            #AlertScreen {{
-                background-color: {theme['background']};
+            #Container {{
+                background-color: {theme['card_bg']};
                 border: 2px solid {theme['alert_color']};
                 border-radius: {border_radius};
             }}
             #AlertHeader {{
                 background-color: {theme['alert_color']};
-                color: {theme['alert_text_color']};
-                padding: 10px;
                 border-top-left-radius: {border_radius};
                 border-top-right-radius: {border_radius};
-            }}
-            #AlertIcon {{
-                font-size: 24px;
-                background: transparent;
+                min-height: 40px;
             }}
             #AlertHeaderText {{
-                font-size: 18px;
-                font-weight: bold;
-                color: {theme['alert_text_color']};
-                background: transparent;
-            }}
-            #AlertBody {{
-                background-color: {theme['background']};
-                border-bottom-left-radius: {border_radius};
-                border-bottom-right-radius: {border_radius};
-            }}
-            #AlertMainText {{
                 font-size: 16px;
                 font-weight: bold;
+                color: {theme['alert_text_color']};
+                background-color: transparent;
+            }}
+            #AlertBody {{
+                background-color: transparent;
+            }}
+            #AlertMainText {{
+                font-size: 22px;
+                font-weight: bold;
                 color: {theme['text']};
-                padding-bottom: 10px;
+                padding-bottom: 15px;
             }}
             #AlertAdviceText {{
-                font-size: 14px;
-                color: {theme['text']};
+                font-size: 16px;
+                color: {theme['text_secondary']};
+            }}
+            #OkButton {{
+                background-color: {theme['alert_btn_bg']};
+                color: {theme['alert_btn_text']};
+                border: 1px solid {theme['alert_btn_border']};
+                border-radius: 8px;
+                padding: 10px;
+                font-size: 16px;
+                font-weight: bold;
+                min-width: 150px;
+            }}
+            #OkButton:hover {{
+                background-color: {theme['alert_btn_bg_hover']};
             }}
         """)
 
