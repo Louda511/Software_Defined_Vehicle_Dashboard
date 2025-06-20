@@ -31,10 +31,17 @@ class Feature:
     @classmethod
     def from_dict(cls, data: dict) -> 'Feature':
         """Create a Feature instance from a dictionary"""
+        description = data.get('description', '')
+        
+        # Split description into short and long versions
+        parts = description.split('.', 1)
+        short_desc = parts[0] + '.' if len(parts) > 0 else description
+        long_desc = description
+        
         return cls(
             name=data.get('name', ''),
-            short_desc=data.get('short_desc', ''),
-            long_desc=data.get('long_desc', ''),
+            short_desc=short_desc.strip(),
+            long_desc=long_desc.strip(),
             icon=data.get('icon', ''),
             location=data.get('location', '')
         )
