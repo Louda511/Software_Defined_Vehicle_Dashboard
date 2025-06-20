@@ -44,7 +44,8 @@ def extract_image_name(url: str) -> str:
     
     # Handle URLs like https://hub.docker.com/r/example/my-image
     if '/r/' in url:
-        return url.split('/r/')[-1]
+        path = url.split('/r/')[-1]
+        return path.split('/')[-1]
         
     # Fallback for simple names or other URL formats
     return url.rstrip('/').split('/')[-1] 
