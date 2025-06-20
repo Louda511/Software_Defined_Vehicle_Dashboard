@@ -5,7 +5,7 @@ import sys
 from PyQt6.QtWidgets import QApplication
 from utils.file_utils import load_features, load_installed_images
 from ui.components import Dashboard
-from warning_screen import WarningFileWatcher
+from services.alert_service import AlertService
 
 
 def main():
@@ -16,12 +16,12 @@ def main():
     features = load_features()
     installed_images = load_installed_images()
     
-    # Create and show dashboard
+    # Create main window
     dashboard = Dashboard(features, installed_images)
     dashboard.show()
     
-    # Integrate warning screen watcher
-    watcher = WarningFileWatcher('resources/results.json', dashboard)
+    # Initialize and start the alert service
+    alert_service = AlertService('resources/results.json', dashboard)
     
     sys.exit(app.exec())
 

@@ -12,7 +12,9 @@ NIGHT_THEME = {
     'text': '#C0CAF5',            # Light, slightly blue-tinted gray (easy on the eyes)
     'text_secondary': '#A9B1D6',  # Mid-tone for secondary text
     'border': '#414868',          # A visible but not jarring border
-    'success': '#198754'
+    'success': '#198754',
+    'alert_color': '#E06B74',      # A soft red for alerts
+    'alert_text_color': '#1A1B26'  # Use the main background for high contrast
 }
 
 # A clean, low-contrast day theme for reduced glare.
@@ -24,7 +26,9 @@ DAY_THEME = {
     'text': '#2D3748',            # Dark charcoal (softer than pure black)
     'text_secondary': '#718096',  # Medium gray for secondary info
     'border': '#E2E8F0',          # A very light, subtle border
-    'success': '#28a745'
+    'success': '#28a745',
+    'alert_color': '#E53935',      # A standard, clear red for alerts
+    'alert_text_color': '#FFFFFF'  # White text for high contrast
 }
 
 
