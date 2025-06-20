@@ -270,7 +270,7 @@ class NavBar(QFrame):
         self.home_btn.setIcon(get_themed_icon('resources/icons/home.svg'))
         self.location_btn.setIcon(get_themed_icon('resources/icons/location.svg'))
         self.settings_btn.setIcon(get_themed_icon('resources/icons/settings.svg'))
-        self.store_btn.setIcon(get_themed_icon('resources/icons/store.svg'))
+        self.store_btn.setIcon(get_themed_icon('resources/icons/apps.svg'))
         self.theme_btn.setIcon(
             get_themed_icon('resources/icons/night-mode.svg') if theme_manager.is_day_mode() 
             else get_themed_icon('resources/icons/sun.svg')

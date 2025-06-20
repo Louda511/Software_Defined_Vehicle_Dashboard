@@ -16,6 +16,7 @@ def _get_themed_svg_data(icon_path: str) -> bytes:
         # This makes the icons adapt to the day/night themes.
         themed_svg_data = svg_data.replace('stroke="white"', f'stroke="{theme_manager.theme["text"]}"')
         themed_svg_data = themed_svg_data.replace('stroke="#FFFFFF"', f'stroke="{theme_manager.theme["text"]}"')
+        themed_svg_data = themed_svg_data.replace('fill="currentColor"', f'fill="{theme_manager.theme["text"]}"')
         
         return themed_svg_data.encode('utf-8')
     except FileNotFoundError:
