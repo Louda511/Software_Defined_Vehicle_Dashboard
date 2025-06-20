@@ -1,6 +1,4 @@
-#!/bin/sh
-'''exec' "/media/louda/01D73B91B17A54C0/Graduation project/Finale/adas_appstore_dashboard/venv/bin/python3" "$0" "$@"
-' '''
+#!/home/alaa/Desktop/Software_Defined_Vehicle_Dashboard/venv/bin/python3
 # -*- coding: utf-8 -*-
 import re
 import sys

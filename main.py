@@ -126,7 +126,7 @@ class FeatureCard(QFrame):
         self.setStyleSheet('''
             QFrame {
                 border-radius: 12px;
-                background: #23272e;
+                background: #121D3A;
                 border: 1px solid #444;
                 padding: 12px;
             }
