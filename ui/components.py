@@ -132,6 +132,7 @@ class FeatureCard(QFrame):
         def after_install(success: bool):
             if success:
                 self.installed_images.add(self.feature.image_name)
+                save_installed_images(self.installed_images)
                 self.set_installed()
         
         dialog.start_worker(self.feature.location, main_window, after_install)
@@ -574,8 +575,9 @@ class FeatureInfoView(QWidget):
         
         def after_install(success: bool):
             if success:
-                # Update installed state if needed
-                pass
+                self.installed_images.add(self.feature.image_name)
+                save_installed_images(self.installed_images)
+                self.set_installed()
         
         dialog.start_worker(self.feature.location, main_window, after_install)
         dialog.exec() 
