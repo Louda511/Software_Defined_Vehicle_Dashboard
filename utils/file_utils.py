@@ -6,7 +6,7 @@ import os
 from typing import List, Set
 from models.feature import Feature
 
-INSTALLED_FILE = 'installed_images.json'
+INSTALLED_FILE = 'resources/installed_images.json'
 
 
 def load_installed_images() -> Set[str]:
@@ -28,7 +28,7 @@ def save_installed_images(installed_set: Set[str]) -> None:
 
 def load_features() -> List[Feature]:
     """Load features from JSON file and convert to Feature objects"""
-    with open('dummy_features.json', 'r') as f:
+    with open('resources/dummy_features.json', 'r') as f:
         data = json.load(f)
         return [Feature.from_dict(feature_data) for feature_data in data]
 
