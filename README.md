@@ -64,7 +64,7 @@ Software_Defined_Vehicle_Dashboard/
 To run the application with the new modular structure:
 
 ```bash
-python main_new.py
+python main.py
 ```
 
 To run the original monolithic version:
