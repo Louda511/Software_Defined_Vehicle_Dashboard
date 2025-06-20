@@ -22,8 +22,9 @@ Software_Defined_Vehicle_Dashboard/
 ├── main.py               # Original monolithic file (kept for reference)
 ├── main_new.py           # New modular main entry point
 ├── warning_screen.py     # Warning screen functionality
-├── dummy_features.json   # Feature data
-├── installed_images.json # Installed images tracking
+├── resources/              # Project resources (icons, data)
+│   ├── dummy_features.json   # Feature data
+│   └── installed_images.json # Installed images tracking
 └── requirements.txt      # Python dependencies
 ```
 
