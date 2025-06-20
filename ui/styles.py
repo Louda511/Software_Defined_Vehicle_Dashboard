@@ -176,6 +176,31 @@ class ThemeManager(QObject):
                 color: {self.theme['text_secondary']};
             }}
             
+            /* Top Bar */
+            #TopBar {{
+                background-color: {self.theme['card_bg']};
+                border-bottom: 1px solid {self.theme['border']};
+                min-height: 50px;
+            }}
+            #TopBarTimeLabel {{
+                font-size: 20px;
+                font-weight: bold;
+                color: {self.theme['text']};
+            }}
+            #TopBarTempLabel {{
+                font-size: 18px;
+                font-weight: bold;
+                color: {self.theme['text']};
+            }}
+            #TopBarWeatherIcon, #TopBarTempLabel {{
+                background-color: transparent;
+            }}
+            #NetworkTypeLabel {{
+                font-size: 18px;
+                font-weight: bold;
+                background-color: transparent;
+            }}
+
             /* Weather Widget */
             QFrame#WeatherWidget {{
                 border-radius: 16px;
