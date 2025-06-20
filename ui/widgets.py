@@ -3,7 +3,7 @@ Custom widgets for the ADAS Dashboard
 """
 from PyQt6.QtWidgets import QFrame, QVBoxLayout, QLabel, QHBoxLayout, QWidget, QGridLayout
 from PyQt6.QtCore import QTimer, Qt, QSize
-from PyQt6.QtGui import QPixmap, QFont
+from PyQt6.QtGui import QPixmap, QFont, QPainter, QColor
 from datetime import datetime
 from .styles import theme_manager
 from .icon_utils import get_themed_pixmap, get_themed_icon
@@ -164,4 +164,65 @@ class Dashboard(QWidget):
         self.weather_widget = WeatherWidget()
         layout.addWidget(self.weather_widget)
         
-        self.setLayout(layout) 
+        self.setLayout(layout)
+
+
+class SignalBarsWidget(QWidget):
+    """A widget that draws mobile signal strength bars."""
+    def __init__(self, parent=None):
+        super().__init__(parent)
+        self.setFixedSize(32, 24)
+        self._bar_color = QColor("#000000")
+
+    def set_color(self, color: QColor):
+        """Sets the color of the signal bars."""
+        if self._bar_color != color:
+            self._bar_color = color
+            self.update()  # Trigger a repaint
+
+    def paintEvent(self, event):
+        """Paints the signal bars."""
+        painter = QPainter(self)
+        painter.setRenderHint(QPainter.RenderHint.Antialiasing)
+        painter.setPen(Qt.PenStyle.NoPen)
+        painter.setBrush(self._bar_color)
+
+        bar_width = 5
+        max_height = self.height()
+        spacing = 3
+
+        # Bar heights as a percentage of max_height
+        height_percentages = [0.4, 0.6, 0.8, 1.0]
+
+        for i, percentage in enumerate(height_percentages):
+            bar_height = int(max_height * percentage)
+            x = i * (bar_width + spacing)
+            y = max_height - bar_height
+            painter.drawRect(x, y, bar_width, bar_height)
+
+    def sizeHint(self):
+        return QSize(32, 24)
+
+
+class NetworkStatusWidget(QWidget):
+    """A widget that displays network status including signal bars and type."""
+    def __init__(self, parent=None):
+        super().__init__(parent)
+        self._setup_ui()
+
+    def _setup_ui(self):
+        layout = QHBoxLayout(self)
+        layout.setContentsMargins(0, 0, 0, 0)
+        layout.setSpacing(8)
+
+        self.signal_bars = SignalBarsWidget()
+        self.network_type_label = QLabel("5G")
+        self.network_type_label.setObjectName("NetworkTypeLabel")
+
+        layout.addWidget(self.signal_bars)
+        layout.addWidget(self.network_type_label)
+
+    def set_color(self, color: QColor):
+        """Sets the color for all elements in the widget."""
+        self.signal_bars.set_color(color)
+        self.network_type_label.setStyleSheet(f"color: {color.name()};") 

@@ -48,4 +48,23 @@ def extract_image_name(url: str) -> str:
         return path.split('/')[-1]
         
     # Fallback for simple names or other URL formats
-    return url.rstrip('/').split('/')[-1] 
+    return url.rstrip('/').split('/')[-1]
+
+
+def get_active_warning(json_path: str) -> str | None:
+    """
+    Returns the first active warning key from a JSON file if any, else None.
+    """
+    try:
+        with open(json_path, 'r') as f:
+            data = json.load(f)
+        for key in ['drowsy', 'distracted', 'yawning']:
+            if data.get(key, False) is True:
+                return key
+        return None
+    except (json.JSONDecodeError, FileNotFoundError):
+        # Suppress transient errors due to file being written
+        return None
+    except Exception as e:
+        print(f"Error reading warning data: {e}")
+        return None 

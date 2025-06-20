@@ -14,6 +14,7 @@ from utils.file_utils import extract_image_name, save_installed_images
 from .widgets import ClockWidget, WeatherWidget
 from .styles import theme_manager
 from .icon_utils import get_themed_icon
+from .top_bar import TopBar
 from PyQt6.QtCore import pyqtSignal
 from services.podman_service import PodmanWorker
 
@@ -268,8 +269,8 @@ class NavBar(QFrame):
         """Update icons based on the current theme."""
         self.home_btn.setIcon(get_themed_icon('resources/icons/home.svg'))
         self.location_btn.setIcon(get_themed_icon('resources/icons/location.svg'))
-        self.settings_btn.setIcon(get_themed_icon('resources/icons/settings.svg'))
-        self.store_btn.setIcon(get_themed_icon('resources/icons/store.svg'))
+        self.settings_btn.setIcon(get_themed_icon('resources/icons/phone.svg'))
+        self.store_btn.setIcon(get_themed_icon('resources/icons/apps.svg'))
         self.theme_btn.setIcon(
             get_themed_icon('resources/icons/night-mode.svg') if theme_manager.is_day_mode() 
             else get_themed_icon('resources/icons/sun.svg')
@@ -322,18 +323,14 @@ class Dashboard(QWidget):
         self.setWindowTitle('ADAS Dashboard')
         self.resize(1280, 720)
 
-        main_layout = QVBoxLayout()
+        main_layout = QVBoxLayout(self)
         main_layout.setContentsMargins(0, 0, 0, 0)
         main_layout.setSpacing(0)
-        self.setLayout(main_layout)
         
-        self.navbar = NavBar(self)
-        # Connect navigation signals
-        self.navbar.home_clicked.connect(self.show_dashboard)
-        self.navbar.store_clicked.connect(self.show_store)
-        self.navbar.location_clicked.connect(self.show_location)
-        self.navbar.settings_clicked.connect(self.show_settings)
+        # Top Bar
+        top_bar = TopBar()
         
+        # Main content area
         self.stack = QStackedWidget()
         dashboard_view = QWidget()
         dashboard_layout = QHBoxLayout(dashboard_view)
@@ -365,8 +362,16 @@ class Dashboard(QWidget):
         self.stack.addWidget(self.store_view)
 
         # Add stack first, then navbar to place it at the bottom
-        main_layout.addWidget(self.stack)
+        main_layout.addWidget(top_bar)
+        main_layout.addWidget(self.stack, 1) # Add stretch factor
+        self.navbar = NavBar(self)
+        self.navbar.home_clicked.connect(self.show_dashboard)
+        self.navbar.store_clicked.connect(self.show_store)
+        
+        # Assemble layout
         main_layout.addWidget(self.navbar)
+        
+        self.setLayout(main_layout)
 
     def show_info_view(self, feature: Feature):
         """Show the full-screen info view for a feature"""

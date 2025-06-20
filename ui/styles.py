@@ -12,7 +12,13 @@ NIGHT_THEME = {
     'text': '#C0CAF5',            # Light, slightly blue-tinted gray (easy on the eyes)
     'text_secondary': '#A9B1D6',  # Mid-tone for secondary text
     'border': '#414868',          # A visible but not jarring border
-    'success': '#198754'
+    'success': '#198754',
+    'alert_color': '#E06B74',      # A soft red for alerts
+    'alert_text_color': '#1A1B26',  # Use the main background for high contrast
+    'alert_btn_bg': '#292B3D',
+    'alert_btn_bg_hover': '#414868',
+    'alert_btn_border': '#414868',
+    'alert_btn_text': '#C0CAF5'
 }
 
 # A clean, low-contrast day theme for reduced glare.
@@ -24,7 +30,13 @@ DAY_THEME = {
     'text': '#2D3748',            # Dark charcoal (softer than pure black)
     'text_secondary': '#718096',  # Medium gray for secondary info
     'border': '#E2E8F0',          # A very light, subtle border
-    'success': '#28a745'
+    'success': '#28a745',
+    'alert_color': '#E53935',      # A standard, clear red for alerts
+    'alert_text_color': '#FFFFFF',  # White text for high contrast
+    'alert_btn_bg': '#E2E8F0',
+    'alert_btn_bg_hover': '#CBD5E0',
+    'alert_btn_border': '#CBD5E0',
+    'alert_btn_text': '#2D3748'
 }
 
 
@@ -164,6 +176,31 @@ class ThemeManager(QObject):
                 color: {self.theme['text_secondary']};
             }}
             
+            /* Top Bar */
+            #TopBar {{
+                background-color: {self.theme['card_bg']};
+                border-bottom: 1px solid {self.theme['border']};
+                min-height: 50px;
+            }}
+            #TopBarTimeLabel {{
+                font-size: 20px;
+                font-weight: bold;
+                color: {self.theme['text']};
+            }}
+            #TopBarTempLabel {{
+                font-size: 18px;
+                font-weight: bold;
+                color: {self.theme['text']};
+            }}
+            #TopBarWeatherIcon, #TopBarTempLabel {{
+                background-color: transparent;
+            }}
+            #NetworkTypeLabel {{
+                font-size: 18px;
+                font-weight: bold;
+                background-color: transparent;
+            }}
+
             /* Weather Widget */
             QFrame#WeatherWidget {{
                 border-radius: 16px;
