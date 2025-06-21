@@ -68,3 +68,23 @@ def get_active_warning(json_path: str) -> str | None:
     except Exception as e:
         print(f"Error reading warning data: {e}")
         return None 
+
+
+def get_active_warnings(json_path: str) -> List[str]:
+    """
+    Returns a list of all active warning keys from a JSON file.
+    """
+    try:
+        with open(json_path, 'r') as f:
+            data = json.load(f)
+        active_warnings = []
+        for key in ['drowsy', 'distracted', 'yawning']:
+            if data.get(key, False) is True:
+                active_warnings.append(key)
+        return active_warnings
+    except (json.JSONDecodeError, FileNotFoundError):
+        # Suppress transient errors due to file being written
+        return []
+    except Exception as e:
+        print(f"Error reading warning data: {e}")
+        return [] 

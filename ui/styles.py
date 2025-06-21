@@ -13,7 +13,7 @@ NIGHT_THEME = {
     'text_secondary': '#A9B1D6',  # Mid-tone for secondary text
     'border': '#414868',          # A visible but not jarring border
     'success': '#198754',
-    'alert_color': '#E06B74',      # A soft red for alerts
+    'alert_color': '#64B5F6',      # Soft teal/cyan for alerts (professional & eye-friendly)
     'alert_text_color': '#1A1B26',  # Use the main background for high contrast
     'alert_btn_bg': '#292B3D',
     'alert_btn_bg_hover': '#414868',
@@ -31,7 +31,7 @@ DAY_THEME = {
     'text_secondary': '#718096',  # Medium gray for secondary info
     'border': '#E2E8F0',          # A very light, subtle border
     'success': '#28a745',
-    'alert_color': '#E53935',      # A standard, clear red for alerts
+    'alert_color': '#4FC3F7',      # Soft teal/cyan for alerts (professional & eye-friendly)
     'alert_text_color': '#FFFFFF',  # White text for high contrast
     'alert_btn_bg': '#E2E8F0',
     'alert_btn_bg_hover': '#CBD5E0',
@@ -47,8 +47,8 @@ class ThemeManager(QObject):
     def __init__(self):
         super().__init__()
         self._themes = {'night': NIGHT_THEME, 'day': DAY_THEME}
-        self._current_theme_name = 'day'
-        self.theme = DAY_THEME
+        self._current_theme_name = 'night'
+        self.theme = NIGHT_THEME
 
     def set_theme(self, name: str):
         """Set the current theme by name ('day' or 'night')"""

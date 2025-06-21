@@ -33,7 +33,7 @@ end
 # Unset irrelevant variables.
 deactivate nondestructive
 
-set -gx VIRTUAL_ENV /home/alaa/Desktop/Software_Defined_Vehicle_Dashboard/venv
+set -gx VIRTUAL_ENV /home/alaa/Documents/Grad_Proj/Software_Defined_Vehicle_Dashboard/venv
 
 set -gx _OLD_VIRTUAL_PATH $PATH
 set -gx PATH "$VIRTUAL_ENV/"bin $PATH
