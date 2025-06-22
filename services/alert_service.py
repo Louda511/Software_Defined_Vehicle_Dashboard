@@ -64,7 +64,7 @@ class AlertService(QObject):
             highest_priority_warning = self._get_highest_priority_warning(active_warnings)
             
             if highest_priority_warning:
-            main_msg, advice_msg = ALERT_MESSAGES.get(
+                main_msg, advice_msg = ALERT_MESSAGES.get(
                     highest_priority_warning, ('Warning detected!', '')
             )
             
