@@ -33,6 +33,24 @@ def load_features() -> List[Feature]:
         return [Feature.from_dict(feature_data) for feature_data in data]
 
 
+def save_features(features: list) -> None:
+    """
+    Saves a list of features to the dummy_features.json file,
+    adapting the format from the backend response.
+    """
+    adapted_features = []
+    for feature in features:
+        adapted_features.append({
+            "name": feature.get("name"),
+            "location": feature.get("location"),
+            "description": feature.get("description"),
+            "icon": feature.get("pictureUrl")  # Adapt pictureUrl to icon
+        })
+    
+    with open('resources/dummy_features.json', 'w') as f:
+        json.dump(adapted_features, f, indent=4)
+
+
 def extract_image_name(url: str) -> str:
     """Extracts the image name from various Docker Hub URL formats."""
     if not url:
