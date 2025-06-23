@@ -73,6 +73,64 @@ To run the original monolithic version:
 python main.py
 ```
 
+## Running the Application in a Container
+
+You can run this application in a container using Podman (or Docker) with full GUI support.
+
+### 1. Build the Image
+
+```bash
+podman build -t adas-dashboard .
+```
+
+### 2. Run the Container (with GUI/X11 support)
+
+```bash
+xhost +local:docker  # Allow X11 connections (only needed once per session)
+podman run --rm \
+    --name adas-dashboard \
+    --env DISPLAY=$DISPLAY \
+    --env QT_X11_NO_MITSHM=1 \
+    --volume /tmp/.X11-unix:/tmp/.X11-unix:rw \
+    --volume .:/app \
+    --network host \
+    --interactive \
+    --tty \
+    adas-dashboard
+```
+
+### 3. Using the Provided Script (Recommended)
+
+A script is provided for convenience:
+
+```bash
+./run-container.sh
+```
+
+This script will:
+- Set up X11 permissions
+- Build the image (if needed)
+- Run the container with the correct settings
+
+### 4. Using Docker Compose (Optional)
+
+You can also use Docker Compose:
+
+```bash
+docker-compose up --build
+```
+
+Or in detached mode:
+
+```bash
+docker-compose up -d --build
+```
+
+### Notes
+- Make sure you are running in a graphical environment (not over SSH without X11 forwarding).
+- The container will display the GUI on your host system.
+- For troubleshooting and more details, see `README-Container.md`.
+
 ## Migration Notes
 
 The original `main.py` file has been preserved for reference. The new modular structure maintains the same functionality while providing better organization and maintainability.
