@@ -40,11 +40,14 @@ podman run --rm \
     --name adas-dashboard \
     --env DISPLAY=$DISPLAY \
     --env QT_X11_NO_MITSHM=1 \
+    --env PODMAN_SOCKET_PATH=/run/podman/podman.sock \
     --volume /tmp/.X11-unix:/tmp/.X11-unix:rw \
-    --volume .:/app \
+    --volume /run/user/1000/podman/podman.sock:/run/podman/podman.sock:rw \
     --network host \
     --interactive \
     --tty \
     adas-dashboard
 
 echo -e "${GREEN}Container stopped.${NC}" 
+
+echo $PODMAN_SOCKET_PATH 
