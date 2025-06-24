@@ -57,6 +57,7 @@ echo -e "${YELLOW}Building container image...${NC}"
 podman build -t adas-dashboard .
 
 # Run the container with UID mapping for secure socket and file access
+# Mount only code files, not resources (JSON files will be container-local)
 echo -e "${YELLOW}Starting ADAS Dashboard...${NC}"
 podman run --rm \
     --name adas-dashboard \
@@ -65,7 +66,12 @@ podman run --rm \
     --env QT_X11_NO_MITSHM=1 \
     --env PODMAN_SOCKET_PATH=$CONTAINER_SOCKET \
     --volume /tmp/.X11-unix:/tmp/.X11-unix:rw \
-    --volume .:/app \
+    --volume ./main.py:/app/main.py:ro \
+    --volume ./models:/app/models:ro \
+    --volume ./services:/app/services:ro \
+    --volume ./ui:/app/ui:ro \
+    --volume ./utils:/app/utils:ro \
+    --volume ./requirements.txt:/app/requirements.txt:ro \
     --volume "$PODMAN_SOCKET:$CONTAINER_SOCKET:rw" \
     --network host \
     --interactive \

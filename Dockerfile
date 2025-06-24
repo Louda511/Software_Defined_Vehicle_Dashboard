@@ -73,6 +73,9 @@ COPY requirements.txt .
 # Install Python dependencies (this layer will be cached unless requirements.txt changes)
 RUN pip install --no-cache-dir -r requirements.txt
 
+# Copy resources directory into container (will be container-local, not mounted from host)
+COPY resources/ ./resources/
+
 # Create a non-root user with UID 1000 for proper UID mapping
 RUN useradd -m -u 1000 appuser && chown -R appuser:appuser /app
 
