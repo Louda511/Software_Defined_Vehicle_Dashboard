@@ -6,13 +6,13 @@ ENV PYTHONUNBUFFERED=1
 ENV DISPLAY=:0
 ENV QT_X11_NO_MITSHM=1
 
-# Allow for a PODMAN_SOCKET_PATH environment variable (default to /run/podman/podman.sock)
-ENV PODMAN_SOCKET_PATH=/run/podman/podman.sock
+# Allow for a PODMAN_SOCKET_PATH environment variable (default to user socket for rootless Podman)
+ENV PODMAN_SOCKET_PATH=/run/user/1000/podman/podman.sock
 
 # Optionally, you can document in the Dockerfile how to mount the socket when running the container:
 # Example:
-#   podman run -v /run/user/1000/podman/podman.sock:/run/podman/podman.sock:rw \
-#     -e PODMAN_SOCKET_PATH=/run/podman/podman.sock ...
+#   podman run -v /run/user/1000/podman/podman.sock:/run/user/1000/podman/podman.sock:rw \
+#     -e PODMAN_SOCKET_PATH=/run/user/1000/podman/podman.sock ...
 
 # Install system dependencies for PyQt6 and X11
 RUN apt-get update && apt-get install -y \
@@ -70,17 +70,11 @@ WORKDIR /app
 # Copy requirements first for better caching
 COPY requirements.txt .
 
-# Install Python dependencies
+# Install Python dependencies (this layer will be cached unless requirements.txt changes)
 RUN pip install --no-cache-dir -r requirements.txt
 
-# Copy application code and resources
-COPY . .
-
-# Create a non-root user for security
+# Create a non-root user with UID 1000 for proper UID mapping
 RUN useradd -m -u 1000 appuser && chown -R appuser:appuser /app
-
-# At the end of your Dockerfile (before USER appuser)
-RUN chown -R appuser:appuser /app
 
 USER appuser
 
