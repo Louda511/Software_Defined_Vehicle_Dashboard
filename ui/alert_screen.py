@@ -84,7 +84,6 @@ class AlertScreen(QDialog):
                 background-color: {theme['card_bg']};
                 border: 2px solid {theme['alert_color']};
                 border-radius: {border_radius};
-                box-shadow: 0 8px 32px rgba(0, 0, 0, 0.12);
             }}
             #AlertHeader {{
                 background: qlineargradient(x1:0, y1:0, x2:0, y2:1,
@@ -111,14 +110,12 @@ class AlertScreen(QDialog):
                 color: {theme['text']};
                 padding: 20px 0 15px 0;
                 line-height: 1.4;
-                word-wrap: break-word;
             }}
             #AlertAdviceText {{
                 font-size: 20px;
                 color: {theme['text_secondary']};
                 line-height: 1.5;
                 padding: 0 10px 20px 10px;
-                word-wrap: break-word;
             }}
         """)
 

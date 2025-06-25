@@ -11,6 +11,7 @@ from models.feature import Feature
 from services.podman_service import PodmanWorker
 from .styles import theme_manager
 from .icon_utils import get_themed_icon
+import os
 
 
 class FeatureDialog(QDialog):
@@ -101,149 +102,142 @@ class DownloadInstallDialog(QDialog):
 
 
 class InfoDialog(QDialog):
-    """A styled dialog for showing feature info."""
+    """A robust, modern, and scalable dialog for showing feature info."""
+    ICON_KEYWORDS = {
+        'adaptive cruise': 'adaptive-cruise.svg',
+        'lane': 'lane.svg',
+        'cruise': 'cruise.svg',
+        'brake': 'brake.svg',
+        'hello': 'hello.svg',
+        'weather': 'weather-clear.svg',
+        'store': 'store.svg',
+    }
+
     def __init__(self, feature: Feature, parent=None):
         super().__init__(parent)
         self.feature = feature
+        # Frameless window for a modern look
         self.setWindowFlags(Qt.WindowType.FramelessWindowHint | Qt.WindowType.Dialog)
-        self.setAttribute(Qt.WidgetAttribute.WA_TranslucentBackground)
         self.setModal(True)
-        self.setMinimumWidth(750)
-        self.setWindowOpacity(0.0) # Start transparent for fade-in
-
+        self.setMinimumWidth(700)
+        self.setMinimumHeight(420)
         self._setup_ui()
-        theme_manager.theme_changed.connect(self.update_styles)
         self.update_styles()
 
-    def showEvent(self, event):
-        super().showEvent(event)
-        # Fade-in animation
-        animation = QPropertyAnimation(self, b"windowOpacity")
-        animation.setDuration(300)
-        animation.setStartValue(0.0)
-        animation.setEndValue(1.0)
-        animation.setEasingCurve(QEasingCurve.Type.InOutCubic)
-        animation.start(QPropertyAnimation.DeletionPolicy.DeleteWhenStopped)
-
     def _get_feature_icon_path(self) -> str:
-        """Helper to get the correct icon path."""
-        feature_name = self.feature.name.lower()
-        if 'adaptive cruise control' in feature_name:
-            return 'resources/icons/adaptive-cruise.svg'
-        if 'lane' in feature_name: return 'resources/icons/lane.svg'
-        if 'cruise' in feature_name: return 'resources/icons/cruise.svg'
-        if 'brake' in feature_name: return 'resources/icons/brake.svg'
-        if 'hello' in feature_name: return 'resources/icons/hello.svg'
-        if 'weather' in feature_name: return self._get_weather_icon(self.feature.short_description)
+        icon_path = self.feature.icon
+        if icon_path and os.path.exists(icon_path):
+            return icon_path
+        name = self.feature.name.lower()
+        icon_path_lower = icon_path.lower() if icon_path else ''
+        for keyword, icon_file in self.ICON_KEYWORDS.items():
+            if keyword in name or keyword in icon_path_lower:
+                return f'resources/icons/{icon_file}'
         return 'resources/icons/store.svg'
 
     def _setup_ui(self):
-        container = QWidget()
-        container.setObjectName("Container")
-        
-        main_layout = QVBoxLayout(self)
-        main_layout.setContentsMargins(0,0,0,0)
-        main_layout.addWidget(container)
-        
-        # A single vertical layout for a centered design
-        layout = QVBoxLayout(container)
-        layout.setContentsMargins(35,35,35,35)
-        layout.setSpacing(15)
+        layout = QVBoxLayout(self)
+        layout.setSpacing(24)
+        layout.setContentsMargins(48, 48, 48, 48)
 
-        # Icon in the middle
-        icon_container = QFrame()
-        icon_container.setObjectName("IconContainer")
-        icon_container.setFixedSize(140, 140) # Increased size
-        icon_layout = QVBoxLayout(icon_container)
-        icon_layout.setContentsMargins(0,0,0,0)
+        # Icon in a circle
+        icon_circle = QFrame()
+        icon_circle.setObjectName("IconCircle")
+        icon_circle.setFixedSize(140, 140)
+        icon_circle_layout = QVBoxLayout(icon_circle)
+        icon_circle_layout.setContentsMargins(0, 0, 0, 0)
         self.icon_label = QLabel()
         self.icon_label.setAlignment(Qt.AlignmentFlag.AlignCenter)
-        icon_layout.addWidget(self.icon_label)
-        layout.addWidget(icon_container, alignment=Qt.AlignmentFlag.AlignCenter)
+        self.icon_label.setFixedSize(90, 90)
+        icon_circle_layout.addWidget(self.icon_label, alignment=Qt.AlignmentFlag.AlignCenter)
+        layout.addWidget(icon_circle, alignment=Qt.AlignmentFlag.AlignCenter)
 
-        # Title under the icon
+        # Title
         title_label = QLabel(self.feature.name)
         title_label.setObjectName("InfoTitle")
         title_label.setAlignment(Qt.AlignmentFlag.AlignCenter)
         layout.addWidget(title_label)
 
-        # Short Description
+        # Short Description (italic subtitle)
         short_desc_label = QLabel(self.feature.short_desc)
         short_desc_label.setObjectName("InfoShortDescription")
         short_desc_label.setWordWrap(True)
         short_desc_label.setAlignment(Qt.AlignmentFlag.AlignCenter)
         layout.addWidget(short_desc_label)
 
-        # Separator
+        # Separator (thin colored line)
         separator = QFrame()
-        separator.setObjectName("Separator")
         separator.setFrameShape(QFrame.Shape.HLine)
         separator.setFrameShadow(QFrame.Shadow.Sunken)
+        separator.setObjectName("Separator")
         layout.addWidget(separator)
 
-        # Long Description
+        # Long Description (left-aligned)
         desc_label = QLabel(self.feature.long_desc)
         desc_label.setObjectName("InfoLongDescription")
         desc_label.setWordWrap(True)
         desc_label.setAlignment(Qt.AlignmentFlag.AlignLeft)
         layout.addWidget(desc_label)
-        
+
         layout.addStretch()
-        
-        # Close button at the bottom
+
+        # Close button (wide, rounded, centered)
         close_button = QPushButton("Close")
         close_button.setObjectName("CloseButton")
         close_button.clicked.connect(self.accept)
+        close_button.setMinimumWidth(180)
+        close_button.setMinimumHeight(44)
         layout.addWidget(close_button, alignment=Qt.AlignmentFlag.AlignCenter)
 
     def update_styles(self):
         theme = theme_manager.theme
         icon_path = self._get_feature_icon_path()
-        
-        # Use the default theme color for the icon for high contrast
         themed_icon = get_themed_icon(icon_path)
-        self.icon_label.setPixmap(themed_icon.pixmap(120, 120)) # Larger icon
-
+        self.icon_label.setPixmap(themed_icon.pixmap(90, 90))
         self.setStyleSheet(f"""
-            #Container {{
+            QDialog {{
                 background-color: {theme['card_bg']};
-                border-radius: 16px;
-                border: 1px solid {theme['border']};
+                color: {theme['text']};
+                border-radius: 28px;
+                border: none;
+                padding: 0px;
             }}
-            #IconContainer {{
+            #IconCircle {{
                 background-color: {theme['background']};
-                border-radius: 70px; /* Half of width/height for a perfect circle */
-                border: 1px solid {theme['border']};
+                border-radius: 70px;
+                border: 2px solid {theme['border']};
             }}
             #InfoTitle {{
-                font-size: 30px;
+                font-size: 32px;
                 font-weight: bold;
                 color: {theme['text']};
-                padding-top: 10px;
+                margin-bottom: 8px;
             }}
             #InfoShortDescription {{
                 font-size: 18px;
                 font-style: italic;
                 color: {theme['text_secondary']};
-                padding-bottom: 15px;
+                margin-bottom: 12px;
             }}
             #Separator {{
                 background-color: {theme['accent']};
-                height: 1px;
+                height: 2px;
+                margin: 10px 0 18px 0;
             }}
             #InfoLongDescription {{
                 font-size: 16px;
                 color: {theme['text']};
+                margin-bottom: 10px;
             }}
             #CloseButton {{
                 background-color: {theme['accent']};
-                color: {theme.get('card_bg', '#FFFFFF')};
+                color: white;
                 border: none;
-                border-radius: 8px;
-                padding: 12px 30px;
-                font-size: 16px;
+                border-radius: 12px;
+                padding: 14px 36px;
+                font-size: 18px;
                 font-weight: bold;
-                margin-top: 10px;
+                min-width: 180px;
             }}
             #CloseButton:hover {{
                 background-color: {theme['accent_hover']};
