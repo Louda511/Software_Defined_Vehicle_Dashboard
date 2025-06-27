@@ -402,3 +402,22 @@ class Dashboard(QWidget):
         """Show the main dashboard view."""
         self.nav_bar.set_active_button('home')
         self.main_stack.setCurrentIndex(0)
+    
+    def closeEvent(self, event):
+        """Handle application close event to clean up resources."""
+        # Stop any running timers
+        if hasattr(self.clock, 'timer'):
+            self.clock.timer.stop()
+        if hasattr(self.weather, 'timer'):
+            self.weather.timer.stop()
+        
+        # Stop TopBar timers
+        if hasattr(self.top_bar, 'weather_timer'):
+            self.top_bar.weather_timer.stop()
+        # Stop the unnamed timer in TopBar
+        for child in self.top_bar.children():
+            if hasattr(child, 'timeout') and hasattr(child, 'stop'):
+                child.stop()
+        
+        # Accept the close event
+        event.accept()

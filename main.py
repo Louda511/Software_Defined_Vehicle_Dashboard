@@ -32,8 +32,9 @@ def main():
     # Initialize and start the alert service
     alert_service = AlertService('resources/results.json', dashboard)
     
-    sys.exit(app.exec())
+    # Use app.exec() directly instead of sys.exit() for proper terminal return
+    return app.exec()
 
 
 if __name__ == '__main__':
-    main() 
+    sys.exit(main()) 
