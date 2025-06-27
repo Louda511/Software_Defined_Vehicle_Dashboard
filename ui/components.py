@@ -9,7 +9,7 @@ from PyQt6.QtWidgets import (
 from PyQt6.QtGui import QPixmap, QFont, QIcon
 from PyQt6.QtCore import Qt, QSize, QThread, QPropertyAnimation, QEasingCurve, QRect, QTimer
 from models.feature import Feature
-from ui.dialogs import FeatureDialog, DownloadInstallDialog
+from ui.dialogs import InfoDialog, DownloadInstallDialog
 from utils.file_utils import extract_image_name, save_installed_images
 from .widgets import ClockWidget, WeatherWidget
 from .styles import theme_manager
@@ -33,9 +33,9 @@ class FeatureCard(QFrame):
     def _setup_ui(self):
         """Setup the feature card UI"""
         self.setObjectName("FeatureCard")
-        self.setFixedSize(600, 220)
+        self.setFixedSize(600, 200)
         layout = QVBoxLayout()
-        layout.setSpacing(16)
+        layout.setSpacing(12)
         
         layout.addStretch()
         
@@ -45,8 +45,7 @@ class FeatureCard(QFrame):
         self.icon_label.setFixedSize(64, 64)
         layout.addWidget(self.icon_label, alignment=Qt.AlignmentFlag.AlignCenter)
         
-        # Add extra space after icon
-        layout.addSpacing(8)
+        layout.addSpacing(20) # Increase space between icon and title
         
         # Title
         title = QLabel(self.feature.name)
@@ -54,13 +53,6 @@ class FeatureCard(QFrame):
         title.setAlignment(Qt.AlignmentFlag.AlignCenter)
         title.setWordWrap(True)
         layout.addWidget(title)
-        
-        # Description
-        desc = QLabel(self.feature.short_desc)
-        desc.setObjectName("FeatureDesc")
-        desc.setAlignment(Qt.AlignmentFlag.AlignCenter)
-        desc.setWordWrap(True)
-        layout.addWidget(desc)
         
         # Buttons
         button_layout = QHBoxLayout()
@@ -88,12 +80,18 @@ class FeatureCard(QFrame):
     def _get_feature_icon(self) -> str:
         """Get the appropriate icon path for the feature"""
         feature_name = self.feature.name.lower()
+        if 'adaptive cruise control' in feature_name:
+            return 'resources/icons/adaptive-cruise.svg'
         if 'lane' in feature_name:
             return 'resources/icons/lane.svg'
         elif 'cruise' in feature_name:
             return 'resources/icons/cruise.svg'
+        elif 'brake' in feature_name:
+            return 'resources/icons/brake.svg'
         elif 'hello' in feature_name:
             return 'resources/icons/hello.svg'
+        elif 'weather' in feature_name:
+            return 'resources/icons/weather.svg'
         else:
             # Default icon
             return 'resources/icons/store.svg'
@@ -115,10 +113,9 @@ class FeatureCard(QFrame):
         self.download_btn.setObjectName("InstalledButton")
 
     def show_info(self):
-        """Show detailed information about the feature in full-screen view"""
-        main_window = self.window()
-        if hasattr(main_window, 'show_info_view'):
-            main_window.show_info_view(self.feature)
+        """Show detailed information about the feature in a dialog."""
+        dialog = InfoDialog(self.feature, self)
+        dialog.exec()
 
     def download_feature(self):
         """Download and install the feature"""
@@ -310,8 +307,8 @@ class Dashboard(QWidget):
         self._setup_ui()
         theme_manager.theme_changed.connect(self.update_styles)
         # Set initial state without triggering a transition
-        self.stack.setCurrentIndex(0)
-        self.navbar.set_active_button('home')
+        self.main_stack.setCurrentIndex(0)
+        self.nav_bar.set_active_button('home')
         self.update_styles()
     
     def update_styles(self):
@@ -323,266 +320,85 @@ class Dashboard(QWidget):
         self.setWindowTitle('ADAS Dashboard')
         self.resize(1280, 720)
 
-        main_layout = QVBoxLayout(self)
-        main_layout.setContentsMargins(0, 0, 0, 0)
-        main_layout.setSpacing(0)
+        layout = QVBoxLayout(self)
+        layout.setContentsMargins(0, 0, 0, 0)
+        layout.setSpacing(0)
         
         # Top Bar
-        top_bar = TopBar()
+        self.top_bar = TopBar()
         
         # Main content area
-        self.stack = QStackedWidget()
-        dashboard_view = QWidget()
-        dashboard_layout = QHBoxLayout(dashboard_view)
-        dashboard_layout.setContentsMargins(0, 0, 0, 0)
-        dashboard_layout.setSpacing(0)
+        self.main_stack = QStackedWidget()
+        self.dashboard_view = QWidget()
+        self.dashboard_layout = QHBoxLayout(self.dashboard_view)
+        self.dashboard_layout.setContentsMargins(0, 0, 0, 0)
+        self.dashboard_layout.setSpacing(0)
         
         left_panel = QWidget()
         left_layout = QVBoxLayout(left_panel)
         left_layout.setContentsMargins(40, 40, 40, 40)
-        car_display = CarDisplay()
-        left_layout.addWidget(car_display)
-        dashboard_layout.addWidget(left_panel, 6) # Give more space to car
+        self.car_display = CarDisplay()
+        left_layout.addWidget(self.car_display)
+        self.dashboard_layout.addWidget(left_panel, 6) # Give more space to car
         
         right_panel = QWidget()
         right_layout = QVBoxLayout(right_panel)
         right_layout.setContentsMargins(20, 20, 40, 40)
         
-        clock = ClockWidget()
-        right_layout.addWidget(clock, alignment=Qt.AlignmentFlag.AlignCenter)
+        self.clock = ClockWidget()
+        right_layout.addWidget(self.clock, alignment=Qt.AlignmentFlag.AlignCenter)
         
-        weather = WeatherWidget()
-        right_layout.addWidget(weather, alignment=Qt.AlignmentFlag.AlignCenter)
+        self.weather = WeatherWidget()
+        right_layout.addWidget(self.weather, alignment=Qt.AlignmentFlag.AlignCenter)
         
         right_layout.addStretch()
-        dashboard_layout.addWidget(right_panel, 4) # Less space to widgets
+        self.dashboard_layout.addWidget(right_panel, 4) # Less space to widgets
         
-        self.stack.addWidget(dashboard_view)
+        self.main_stack.addWidget(self.dashboard_view)
         self.store_view = StoreView(self.features, self.installed_images, self)
-        self.stack.addWidget(self.store_view)
+        self.main_stack.addWidget(self.store_view)
 
-        # Add stack first, then navbar to place it at the bottom
-        main_layout.addWidget(top_bar)
-        main_layout.addWidget(self.stack, 1) # Add stretch factor
-        self.navbar = NavBar(self)
-        self.navbar.home_clicked.connect(self.show_dashboard)
-        self.navbar.store_clicked.connect(self.show_store)
+        layout.addWidget(self.top_bar)
+        layout.addWidget(self.main_stack, 1) # Add stretch factor
+        self.nav_bar = NavBar(self)
+        self.nav_bar.home_clicked.connect(self.show_dashboard)
+        self.nav_bar.store_clicked.connect(self.show_store)
         
         # Assemble layout
-        main_layout.addWidget(self.navbar)
+        layout.addWidget(self.nav_bar)
         
-        self.setLayout(main_layout)
-
-    def show_info_view(self, feature: Feature):
-        """Show the full-screen info view for a feature"""
-        # Create info view if it doesn't exist or update with new feature
-        if not hasattr(self, 'info_view'):
-            self.info_view = FeatureInfoView(feature, self)
-            self.stack.addWidget(self.info_view)
-        else:
-            # Update existing info view with new feature
-            self.info_view.feature = feature
-            self.info_view._setup_ui()
-        
-        self.stack.setCurrentWidget(self.info_view)
-        self.navbar.set_active_button('store')  # Keep store as active since we're viewing a feature
+        self.setLayout(layout)
         self.update_styles()
 
     def _slide_transition(self, next_index: int):
-        current_index = self.stack.currentIndex()
-        if current_index == next_index:
-            return
+        current_widget = self.main_stack.currentWidget()
+        next_widget = self.main_stack.widget(next_index)
 
-        current_widget = self.stack.currentWidget()
-        next_widget = self.stack.widget(next_index)
-
-        if not current_widget or not next_widget:
-            # Fallback for safety, though this shouldn't happen in normal operation
-            self.stack.setCurrentIndex(next_index)
-            return
-
-        width = self.stack.width()
-        height = self.stack.height()
+        width = self.frameGeometry().width()
         
-        # Position the next widget to slide in from the correct direction
-        if next_index > current_index:
-            next_widget.setGeometry(width, 0, width, height)
-        else:
-            next_widget.setGeometry(-width, 0, width, height)
-
-        self.stack.setCurrentIndex(next_index)
-
-        # Animate current widget (now next_widget) into view
-        anim = QPropertyAnimation(next_widget, b"geometry", self)
+        self.main_stack.setCurrentIndex(next_index)
+        
+        # Slide from right
+        next_widget.setGeometry(width, 0, width, self.height())
+        anim = QPropertyAnimation(next_widget, b"geometry")
         anim.setDuration(300)
-        anim.setStartValue(next_widget.geometry())
-        anim.setEndValue(QRect(0, 0, width, height))
-        anim.setEasingCurve(QEasingCurve.Type.OutCubic)
-        anim.start(QPropertyAnimation.DeletionPolicy.DeleteWhenStopped)
+        anim.setStartValue(QRect(width, 0, width, self.height()))
+        anim.setEndValue(QRect(0, 0, width, self.height()))
+        anim.setEasingCurve(QEasingCurve.Type.InOutQuad)
+        anim.start()
 
     def show_location(self):
-        """Show location view (placeholder for now)"""
-        self.show_dashboard()
+        print("Location button clicked")
 
     def show_settings(self):
-        """Show settings view (placeholder for now)"""
-        # For now, just show dashboard
-        self.show_dashboard()
+        print("Settings button clicked")
 
     def show_store(self):
-        """Switch to store view with slide transition"""
-        self._slide_transition(1)
-        self.navbar.set_active_button('store')
-        self.update_styles()
+        """Show the app store view."""
+        self.nav_bar.set_active_button('store')
+        self.main_stack.setCurrentIndex(1)
 
     def show_dashboard(self):
-        """Switch to dashboard view with slide transition"""
-        self._slide_transition(0)
-        self.navbar.set_active_button('home')
-        self.update_styles()
-
-
-class FeatureInfoView(QWidget):
-    """Modern full-screen feature information view"""
-    
-    def __init__(self, feature: Feature, parent=None):
-        super().__init__(parent)
-        self.feature = feature
-        self._setup_ui()
-        theme_manager.theme_changed.connect(self._update_icons)
-
-    def _setup_ui(self):
-        """Setup the full-screen info view UI"""
-        self.setObjectName("FeatureInfoView")
-        layout = QVBoxLayout()
-        layout.setContentsMargins(40, 40, 40, 40)
-        layout.setSpacing(30)
-        
-        # Header section
-        header_layout = QHBoxLayout()
-        
-        # Back button
-        back_btn = QPushButton("← Back")
-        back_btn.setObjectName("BackButton")
-        back_btn.clicked.connect(self.go_back)
-        header_layout.addWidget(back_btn)
-        
-        header_layout.addStretch()
-        
-        # Title
-        title = QLabel(self.feature.name)
-        title.setObjectName("InfoTitle")
-        title.setAlignment(Qt.AlignmentFlag.AlignCenter)
-        header_layout.addWidget(title)
-        
-        header_layout.addStretch()
-        
-        # Placeholder for symmetry
-        placeholder = QWidget()
-        placeholder.setFixedSize(back_btn.sizeHint())
-        header_layout.addWidget(placeholder)
-        
-        layout.addLayout(header_layout)
-        
-        # Main content
-        content_layout = QHBoxLayout()
-        content_layout.setSpacing(40)
-        
-        # Left panel - Icon and basic info
-        left_panel = QWidget()
-        left_layout = QVBoxLayout()
-        left_layout.setAlignment(Qt.AlignmentFlag.AlignTop)
-        
-        # Large icon
-        self.icon_label = QLabel()
-        self.icon_label.setAlignment(Qt.AlignmentFlag.AlignCenter)
-        self.icon_label.setFixedSize(200, 200)
-        left_layout.addWidget(self.icon_label)
-        
-        # Download button
-        self.download_btn = QPushButton("Download & Install")
-        self.download_btn.setObjectName("InfoDownloadButton")
-        self.download_btn.clicked.connect(self.download_feature)
-        left_layout.addWidget(self.download_btn)
-        
-        left_layout.addStretch()
-        left_panel.setLayout(left_layout)
-        content_layout.addWidget(left_panel, 1)
-        
-        # Right panel - Detailed information
-        right_panel = QWidget()
-        right_layout = QVBoxLayout()
-        right_layout.setAlignment(Qt.AlignmentFlag.AlignTop)
-        
-        # Description
-        desc_label = QLabel("Description")
-        desc_label.setObjectName("InfoSectionTitle")
-        right_layout.addWidget(desc_label)
-        
-        desc_text = QLabel(self.feature.long_desc)
-        desc_text.setObjectName("InfoDescription")
-        desc_text.setWordWrap(True)
-        desc_text.setAlignment(Qt.AlignmentFlag.AlignTop | Qt.AlignmentFlag.AlignLeft)
-        right_layout.addWidget(desc_text)
-        
-        right_layout.addSpacing(20)
-        
-        # Technical details
-        tech_label = QLabel("Technical Details")
-        tech_label.setObjectName("InfoSectionTitle")
-        right_layout.addWidget(tech_label)
-        
-        tech_text = QLabel(f"Image: {self.feature.image_name}\nLocation: {self.feature.location or 'Not specified'}")
-        tech_text.setObjectName("InfoTechDetails")
-        tech_text.setWordWrap(True)
-        right_layout.addWidget(tech_text)
-        
-        right_layout.addStretch()
-        right_panel.setLayout(right_layout)
-        content_layout.addWidget(right_panel, 2)
-        
-        layout.addLayout(content_layout)
-        self.setLayout(layout)
-        self._update_icons()
-
-    def _get_feature_icon(self) -> str:
-        """Get the appropriate icon path for the feature"""
-        feature_name = self.feature.name.lower()
-        if 'lane' in feature_name:
-            return 'resources/icons/lane.svg'
-        elif 'cruise' in feature_name:
-            return 'resources/icons/cruise.svg'
-        elif 'hello' in feature_name:
-            return 'resources/icons/hello.svg'
-        else:
-            return 'resources/icons/store.svg'
-
-    def _update_icons(self):
-        """Update the feature icon based on current theme"""
-        icon_path = self._get_feature_icon()
-        self.icon_label.setPixmap(get_themed_icon(icon_path).pixmap(200, 200))
-
-    def go_back(self):
-        """Return to the previous view"""
-        main_window = self.window()
-        if hasattr(main_window, 'show_store'):
-            main_window.show_store()
-
-    def download_feature(self):
-        """Download and install the feature"""
-        if not self.feature.location:
-            return
-            
-        main_window = self.window()
-        main_window.hide()
-        
-        dialog = DownloadInstallDialog(self.feature.image_name, main_window)
-        
-        def after_install(success: bool):
-            if success:
-                self.installed_images.add(self.feature.image_name)
-                save_installed_images(self.installed_images)
-                self.set_installed()
-        
-        dialog.start_worker(self.feature.location, main_window, after_install)
-        dialog.exec() 
+        """Show the main dashboard view."""
+        self.nav_bar.set_active_button('home')
+        self.main_stack.setCurrentIndex(0)

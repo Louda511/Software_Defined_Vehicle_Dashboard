@@ -1,0 +1,17 @@
+version: '3.8'
+
+services:
+  adas-dashboard:
+    build: .
+    container_name: adas-dashboard
+    environment:
+      - DISPLAY=${DISPLAY}
+      - QT_X11_NO_MITSHM=1
+    volumes:
+      - /tmp/.X11-unix:/tmp/.X11-unix:rw
+      - .:/app
+    network_mode: host
+    privileged: false
+    restart: unless-stopped
+    stdin_open: true
+    tty: true 

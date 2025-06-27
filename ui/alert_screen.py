@@ -12,7 +12,8 @@ class AlertScreen(QDialog):
         self.setWindowFlags(Qt.WindowType.FramelessWindowHint | Qt.WindowType.Dialog)
         self.setAttribute(Qt.WidgetAttribute.WA_TranslucentBackground)
         self.setModal(True)
-        self.setMinimumWidth(500)
+        self.setMinimumWidth(650)
+        self.setMaximumWidth(800)
         
         self.main_message = main_message
         self.advice_message = advice_message
@@ -20,6 +21,9 @@ class AlertScreen(QDialog):
         self._setup_ui()
         theme_manager.theme_changed.connect(self.update_styles)
         self.update_styles()
+        
+        # Adjust size based on content
+        self.adjustSize()
 
     def _setup_ui(self):
         """Setup the alert screen UI"""
@@ -39,9 +43,13 @@ class AlertScreen(QDialog):
         header = QWidget()
         header.setObjectName("AlertHeader")
         header_layout = QHBoxLayout(header)
-        caution_label = QLabel('CAUTION')
+        header_layout.setContentsMargins(15, 12, 15, 12)
+        header_layout.setAlignment(Qt.AlignmentFlag.AlignCenter)
+        
+        caution_label = QLabel('CAUTION ⚠️')
         caution_label.setObjectName("AlertHeaderText")
-        caution_label.setAlignment(Qt.AlignmentFlag.AlignCenter)
+        caution_label.setWordWrap(False)
+        
         header_layout.addWidget(caution_label)
         
         # Body
@@ -49,6 +57,7 @@ class AlertScreen(QDialog):
         body.setObjectName("AlertBody")
         body_layout = QVBoxLayout(body)
         body_layout.setContentsMargins(30, 25, 30, 25)
+        body_layout.setSpacing(15)
         
         self.main_label = QLabel(self.main_message)
         self.main_label.setObjectName("AlertMainText")
@@ -59,16 +68,9 @@ class AlertScreen(QDialog):
         self.advice_label.setObjectName("AlertAdviceText")
         self.advice_label.setAlignment(Qt.AlignmentFlag.AlignCenter)
         self.advice_label.setWordWrap(True)
-
-        # Button
-        self.ok_button = QPushButton("OK")
-        self.ok_button.setObjectName("OkButton")
-        self.ok_button.clicked.connect(self.accept)
         
         body_layout.addWidget(self.main_label)
         body_layout.addWidget(self.advice_label)
-        body_layout.addSpacing(20)
-        body_layout.addWidget(self.ok_button, alignment=Qt.AlignmentFlag.AlignCenter)
         
         layout.addWidget(header)
         layout.addWidget(body)
@@ -76,7 +78,7 @@ class AlertScreen(QDialog):
     def update_styles(self):
         """Apply styles from the theme manager."""
         theme = theme_manager.theme
-        border_radius = "12px"
+        border_radius = "16px"
         self.setStyleSheet(f"""
             #Container {{
                 background-color: {theme['card_bg']};
@@ -84,42 +86,36 @@ class AlertScreen(QDialog):
                 border-radius: {border_radius};
             }}
             #AlertHeader {{
-                background-color: {theme['alert_color']};
+                background: qlineargradient(x1:0, y1:0, x2:0, y2:1,
+                    stop:0 {theme['alert_color']}, stop:1 {theme['alert_color']}dd);
                 border-top-left-radius: {border_radius};
                 border-top-right-radius: {border_radius};
-                min-height: 40px;
+                min-height: 50px;
+                padding: 8px;
             }}
             #AlertHeaderText {{
-                font-size: 16px;
+                font-size: 22px;
                 font-weight: bold;
                 color: {theme['alert_text_color']};
                 background-color: transparent;
+                letter-spacing: 1px;
             }}
             #AlertBody {{
                 background-color: transparent;
+                padding: 8px;
             }}
             #AlertMainText {{
-                font-size: 22px;
+                font-size: 36px;
                 font-weight: bold;
                 color: {theme['text']};
-                padding-bottom: 15px;
+                padding: 20px 0 15px 0;
+                line-height: 1.4;
             }}
             #AlertAdviceText {{
-                font-size: 16px;
+                font-size: 20px;
                 color: {theme['text_secondary']};
-            }}
-            #OkButton {{
-                background-color: {theme['alert_btn_bg']};
-                color: {theme['alert_btn_text']};
-                border: 1px solid {theme['alert_btn_border']};
-                border-radius: 8px;
-                padding: 10px;
-                font-size: 16px;
-                font-weight: bold;
-                min-width: 150px;
-            }}
-            #OkButton:hover {{
-                background-color: {theme['alert_btn_bg_hover']};
+                line-height: 1.5;
+                padding: 0 10px 20px 10px;
             }}
         """)
 
