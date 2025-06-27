@@ -6,7 +6,7 @@ from PyQt6.QtWidgets import (
 )
 from PyQt6.QtGui import QPixmap, QFont, QIcon, QPainter, QColor
 from PyQt6.QtSvg import QSvgRenderer
-from PyQt6.QtCore import Qt, QPropertyAnimation, QEasingCurve, QByteArray
+from PyQt6.QtCore import Qt, QPropertyAnimation, QEasingCurve, QByteArray, QTimer
 from models.feature import Feature
 from services.podman_service import PodmanWorker
 from .styles import theme_manager
@@ -320,8 +320,11 @@ class DownloadInstallDialog(QDialog):
         def on_finish(success: bool, msg: str):
             if success:
                 self.show_success("Downloaded and installed successfully!")
+                # Auto-close dialog after 2 seconds on success
+                QTimer.singleShot(2000, self.accept)
             else:
                 self.show_error(f"Installation failed: {msg}")
+                # Don't auto-close on error - let user decide
             
             main_window.show()
             if on_finish_callback:
