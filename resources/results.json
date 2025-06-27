@@ -1,6 +1,6 @@
 {
     "timestamp_ms": 20250618060212067,
-    "drowsy": true,
-    "distracted": true,
-    "yawning": true
+    "drowsy": false,
+    "distracted": false,
+    "yawning": false
 }

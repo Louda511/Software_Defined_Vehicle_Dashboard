@@ -167,7 +167,7 @@ class ThemeManager(QObject):
                 margin-bottom: 20px;
             }}
             #ClockWidget #TimeLabel {{
-                font-size: 84px;
+                font-size: 48px;
                 font-weight: 300;
             }}
             #ClockWidget #DateLabel {{

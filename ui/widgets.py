@@ -2,12 +2,16 @@
 Custom widgets for the ADAS Dashboard
 """
 from PyQt6.QtWidgets import QFrame, QVBoxLayout, QLabel, QHBoxLayout, QWidget, QGridLayout
-from PyQt6.QtCore import QTimer, Qt, QSize
+from PyQt6.QtCore import QTimer, Qt, QSize, QTime
 from PyQt6.QtGui import QPixmap, QFont, QPainter, QColor
 from datetime import datetime
 from .styles import theme_manager
 from .icon_utils import get_themed_pixmap, get_themed_icon
 from services.podman_service import PodmanWorker
+from utils.weather import fetch_current_weather
+import requests
+from io import BytesIO
+import pytz
 
 
 class CarDisplay(QLabel):
@@ -64,9 +68,10 @@ class ClockWidget(QFrame):
 
     def update_time(self):
         """Update the clock display"""
-        current_time = datetime.now()
-        self.time_label.setText(current_time.strftime("%H:%M"))
-        self.date_label.setText(current_time.strftime("%A, %B %d"))
+        cairo_tz = pytz.timezone("Africa/Cairo")
+        now_cairo = datetime.now(cairo_tz)
+        self.time_label.setText(now_cairo.strftime("%I:%M %p"))
+        self.date_label.setText(now_cairo.strftime("%A, %B %d"))
 
 
 class WeatherWidget(QFrame):
@@ -77,6 +82,10 @@ class WeatherWidget(QFrame):
         self.setObjectName("WeatherWidget")
         self._setup_ui()
         theme_manager.theme_changed.connect(self._update_icons)
+        self._update_weather()
+        self.timer = QTimer(self)
+        self.timer.timeout.connect(self._update_weather)
+        self.timer.start(10 * 60 * 1000)  # Update every 10 minutes
 
     def _setup_ui(self):
         """Setup the weather widget UI"""
@@ -138,10 +147,51 @@ class WeatherWidget(QFrame):
 
     def _update_icons(self):
         """Update icons based on theme."""
-        self.weather_icon.setPixmap(get_themed_icon('resources/icons/weather-clear.svg').pixmap(64, 64))
-        self.feels_like_icon.setPixmap(get_themed_icon('resources/icons/sun.svg').pixmap(24, 24))
-        self.wind_icon.setPixmap(get_themed_icon('resources/icons/wind.svg').pixmap(24, 24))
-        self.humidity_icon.setPixmap(get_themed_icon('resources/icons/rainy.svg').pixmap(24, 24))
+        self._update_weather()
+
+    def _update_weather(self):
+        data = fetch_current_weather("Cairo")  # You can change location as needed
+        if not data or "current" not in data:
+            return
+        current = data["current"]
+        condition = current["condition"]["text"].lower()
+        temp_c = current["temp_c"]
+        feelslike_c = current["feelslike_c"]
+        wind_kph = current["wind_kph"]
+        humidity = current["humidity"]
+        icon_url = current["condition"]["icon"]
+
+        # Try to use the API icon
+        try:
+            if icon_url.startswith("//"):
+                icon_url = "https:" + icon_url
+            response = requests.get(icon_url, timeout=5)
+            response.raise_for_status()
+            pixmap = QPixmap()
+            pixmap.loadFromData(response.content)
+            self.weather_icon.setPixmap(pixmap.scaled(64, 64))
+        except Exception as e:
+            print(f"Failed to load weather icon from API: {e}")
+            # Fallback to local SVG based on condition
+            if "snow" in condition:
+                fallback_icon = 'resources/icons/snowy.svg'
+            elif "fog" in condition or "mist" in condition:
+                fallback_icon = 'resources/icons/foggy.svg'
+            elif "cloud" in condition:
+                fallback_icon = 'resources/icons/cloudy.svg'
+            elif "rain" in condition:
+                fallback_icon = 'resources/icons/rainy.svg'
+            elif "clear" in condition or "sun" in condition:
+                fallback_icon = 'resources/icons/weather-clear.svg'
+            else:
+                fallback_icon = 'resources/icons/weather-clear.svg'  # Default fallback
+            self.weather_icon.setPixmap(get_themed_icon(fallback_icon).pixmap(64, 64))
+
+        self.main_temp_label.setText(f"{int(round(temp_c))}°")
+        self.condition_label.setText(current["condition"]["text"])
+        self.feels_like_label.setText(f"Feels like {int(round(feelslike_c))}°")
+        self.wind_label.setText(f"{wind_kph} km/h")
+        self.humidity_label.setText(f"{humidity}%")
 
 
 class Dashboard(QWidget):

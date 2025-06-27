@@ -72,6 +72,7 @@ COPY requirements.txt .
 
 # Install Python dependencies (this layer will be cached unless requirements.txt changes)
 RUN pip install --no-cache-dir -r requirements.txt
+RUN pip install --no-cache-dir pytz
 
 # Copy resources directory into container (will be container-local, not mounted from host)
 COPY resources/ ./resources/
