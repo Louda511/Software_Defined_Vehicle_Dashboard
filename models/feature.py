@@ -16,17 +16,10 @@ class Feature:
     
     @property
     def image_name(self) -> str:
-        """Extract image name from location URL"""
+        """Returns the image name directly since location now contains only image names."""
         if not self.location:
             return ""
-        
-        # For Docker Hub, extract the image name from the URL
-        # e.g., https://hub.docker.com/_/hello-world -> hello-world
-        if '/_/' in self.location:
-            return self.location.split('/_/')[-1]
-        elif '/r/' in self.location:
-            return self.location.split('/r/')[-1]
-        return self.location.split('/')[-1]
+        return self.location
     
     @classmethod
     def from_dict(cls, data: dict) -> 'Feature':

@@ -51,22 +51,11 @@ def save_features(features: list) -> None:
         json.dump(adapted_features, f, indent=4)
 
 
-def extract_image_name(url: str) -> str:
-    """Extracts the image name from various Docker Hub URL formats."""
-    if not url:
+def extract_image_name(image_name: str) -> str:
+    """Returns the image name as-is since location now contains only image names."""
+    if not image_name:
         return ""
-    
-    # Handle URLs like https://hub.docker.com/_/hello-world
-    if '/_/' in url:
-        return url.split('/_/')[-1]
-    
-    # Handle URLs like https://hub.docker.com/r/example/my-image
-    if '/r/' in url:
-        path = url.split('/r/')[-1]
-        return path.split('/')[-1]
-        
-    # Fallback for simple names or other URL formats
-    return url.rstrip('/').split('/')[-1]
+    return image_name
 
 
 def get_active_warning(json_path: str) -> str | None:

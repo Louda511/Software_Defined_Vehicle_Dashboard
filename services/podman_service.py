@@ -43,6 +43,8 @@ class PodmanWorker(QThread):
         super().__init__(parent)
         self.image_url = image_url
         self.image_name = extract_image_name(image_url)
+        # For pulling: add docker.io/ prefix to ensure user images can be downloaded
+        self.pull_image_name = f"docker.io/{self.image_name}" if not self.image_name.startswith('docker.io/') else self.image_name
         # Use a more robust container naming strategy
         self.container_name = f"adas-{self.image_name.replace('/', '-').replace(':', '-')}"
 
@@ -71,11 +73,11 @@ class PodmanWorker(QThread):
                 client.images.get(self.image_name)
                 self.status_update.emit(f'Image {self.image_name} is already available.')
             except Exception:
-                # Image not found, pull it
-                self.status_update.emit(f'Pulling image: {self.image_name}...')
+                # Image not found, pull it with docker.io/ prefix
+                self.status_update.emit(f'Pulling image: {self.pull_image_name}...')
                 try:
-                    client.images.pull(self.image_name)
-                    self.status_update.emit(f'Successfully pulled image: {self.image_name}')
+                    client.images.pull(self.pull_image_name)
+                    self.status_update.emit(f'Successfully pulled image: {self.pull_image_name}')
                 except Exception as e:
                     self.status_update.emit(f'Failed to pull image: {e}')
                     self.finished.emit(False, f'Image pull failed: {e}')
@@ -91,7 +93,7 @@ class PodmanWorker(QThread):
                     existing_container.start()
                     self.status_update.emit(f"Started existing container '{self.container_name}'.")
             except Exception as e:
-                # Container doesn't exist, create and run it
+                # Container doesn't exist, create and run it using original image name
                 try:
                     client.containers.run(
                         self.image_name,
