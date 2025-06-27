@@ -41,10 +41,10 @@ def save_features(features: list) -> None:
     adapted_features = []
     for feature in features:
         adapted_features.append({
-            "name": feature.get("name"),
-            "location": feature.get("location"),
-            "description": feature.get("description"),
-            "icon": feature.get("pictureUrl")  # Adapt pictureUrl to icon
+            "name": feature.get("name", ""),
+            "location": feature.get("location", ""),
+            "description": feature.get("description", ""),
+            "icon": feature.get("pictureUrl", "")  # Map pictureUrl to icon
         })
     
     with open('resources/dummy_features.json', 'w') as f:
