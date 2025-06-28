@@ -1,7 +1,7 @@
 [
     {
         "name": "Lane Keep Assist",
-        "icon": "resources/icons/lane.svg",
+        "icon": "resources/icons/road.svg",
         "description": "Keeps your car in lane. Keeps your car in lane Lane Keep Assist uses cameras to detect lane markings and gently steers the car to keep it centered in the lane.",
         "location": "https://hub.docker.com/r/example/lane-keep-assist"
     },
@@ -13,13 +13,13 @@
     },
     {
         "name": "Automatic Emergency Braking",
-        "icon": "resources/icons/brake.svg",
+        "icon": "resources/icons/disc-brake-car.svg",
         "description": "Brakes in emergencies. Automatic Emergency Braking detects imminent collisions and applies the brakes to prevent or reduce impact.",
         "location": "https://hub.docker.com/r/example/automatic-emergency-braking"
     },
     {
         "name": "Alpine Linux",
-        "icon": "resources/icons/hello.svg",
+        "icon": "resources/icons/7196914.SVG",
         "description": "The simplest Docker container. This is the official Docker hello-world image. It is used to verify that Docker is installed and working correctly.",
         "location": "https://hub.docker.com/_/alpine"
     }

@@ -44,8 +44,7 @@ class FeatureCard(QFrame):
         self.icon_label.setAlignment(Qt.AlignmentFlag.AlignCenter)
         self.icon_label.setFixedSize(64, 64)
         layout.addWidget(self.icon_label, alignment=Qt.AlignmentFlag.AlignCenter)
-        
-        layout.addSpacing(20) # Increase space between icon and title
+        layout.addSpacing(60) # Large vertical space between icon and title for all cards
         
         # Title
         title = QLabel(self.feature.name)
@@ -79,6 +78,10 @@ class FeatureCard(QFrame):
 
     def _get_feature_icon(self) -> str:
         """Get the appropriate icon path for the feature"""
+        # Always use the icon field from the feature data if present
+        if getattr(self.feature, 'icon', None):
+            return self.feature.icon
+        # Fallbacks if icon is missing
         feature_name = self.feature.name.lower()
         if 'adaptive cruise control' in feature_name:
             return 'resources/icons/adaptive-cruise.svg'
@@ -99,7 +102,12 @@ class FeatureCard(QFrame):
     def _update_icons(self):
         """Update the feature icon based on current theme"""
         icon_path = self._get_feature_icon()
-        self.icon_label.setPixmap(get_themed_icon(icon_path).pixmap(64, 64))
+        self.icon_label.setStyleSheet(f"color: {theme_manager.theme['text']};")
+        if icon_path.lower().endswith('.png'):
+            pixmap = QPixmap(icon_path).scaled(64, 64, Qt.AspectRatioMode.KeepAspectRatio, Qt.TransformationMode.SmoothTransformation)
+            self.icon_label.setPixmap(pixmap)
+        else:
+            self.icon_label.setPixmap(get_themed_icon(icon_path).pixmap(64, 64))
 
     def _check_installed_state(self):
         """Check if this feature is already installed"""
