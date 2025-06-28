@@ -17,6 +17,7 @@ from .icon_utils import get_themed_icon
 from .top_bar import TopBar
 from PyQt6.QtCore import pyqtSignal
 from services.podman_service import PodmanWorker
+import os
 
 
 class FeatureCard(QFrame):
@@ -79,27 +80,59 @@ class FeatureCard(QFrame):
 
     def _get_feature_icon(self) -> str:
         """Get the appropriate icon path for the feature"""
+        # First, try to use the icon field from the feature
+        if self.feature.icon:
+            # Check if it's a local file path
+            if self.feature.icon.startswith('resources/icons/') or self.feature.icon.startswith('./'):
+                # Remove ./ if present for consistency
+                icon_path = self.feature.icon.replace('./', '')
+                if os.path.exists(icon_path):
+                    print(f"[DEBUG] Using local icon for {self.feature.name}: {icon_path}")
+                    return icon_path
+            # Check if it's a valid URL or external path
+            elif self.feature.icon.startswith('http') or self.feature.icon.startswith('https'):
+                print(f"[DEBUG] Using remote URL icon for {self.feature.name}: {self.feature.icon}")
+                return self.feature.icon
+            # Check if it's a base64 data URL
+            elif self.feature.icon.startswith('data:image/'):
+                print(f"[DEBUG] Using base64 icon for {self.feature.name}")
+                return self.feature.icon
+            # Check if it's a relative path that exists
+            elif os.path.exists(self.feature.icon):
+                print(f"[DEBUG] Using relative path icon for {self.feature.name}: {self.feature.icon}")
+                return self.feature.icon
+        
+        # Fallback to keyword matching based on feature name
         feature_name = self.feature.name.lower()
         if 'adaptive cruise control' in feature_name:
+            print(f"[DEBUG] Fallback to adaptive-cruise.svg for {self.feature.name}")
             return 'resources/icons/adaptive-cruise.svg'
         if 'lane' in feature_name:
+            print(f"[DEBUG] Fallback to lane.svg for {self.feature.name}")
             return 'resources/icons/lane.svg'
         elif 'cruise' in feature_name:
+            print(f"[DEBUG] Fallback to cruise.svg for {self.feature.name}")
             return 'resources/icons/cruise.svg'
         elif 'brake' in feature_name:
+            print(f"[DEBUG] Fallback to brake.svg for {self.feature.name}")
             return 'resources/icons/brake.svg'
         elif 'hello' in feature_name:
+            print(f"[DEBUG] Fallback to hello.svg for {self.feature.name}")
             return 'resources/icons/hello.svg'
         elif 'weather' in feature_name:
+            print(f"[DEBUG] Fallback to weather.svg for {self.feature.name}")
             return 'resources/icons/weather.svg'
         else:
-            # Default icon
+            print(f"[DEBUG] Fallback to store.svg for {self.feature.name}")
             return 'resources/icons/store.svg'
 
     def _update_icons(self):
         """Update the feature icon based on current theme"""
         icon_path = self._get_feature_icon()
-        self.icon_label.setPixmap(get_themed_icon(icon_path).pixmap(64, 64))
+        icon = get_themed_icon(icon_path)
+        pixmap = icon.pixmap(64, 64)
+        print(f"[DEBUG] Setting icon for {self.feature.name}: {icon_path}, pixmap isNull={pixmap.isNull()}")
+        self.icon_label.setPixmap(pixmap)
 
     def _check_installed_state(self):
         """Check if this feature is already installed"""

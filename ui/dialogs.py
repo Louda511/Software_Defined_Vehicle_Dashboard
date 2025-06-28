@@ -358,11 +358,24 @@ class InfoDialog(QDialog):
         self.update_styles()
 
     def _get_feature_icon_path(self) -> str:
-        icon_path = self.feature.icon
-        if icon_path and os.path.exists(icon_path):
-            return icon_path
+        # First, try to use the icon field from the feature
+        if self.feature.icon:
+            # Check if it's a local file path
+            if self.feature.icon.startswith('resources/icons/') or self.feature.icon.startswith('./'):
+                # Remove ./ if present for consistency
+                icon_path = self.feature.icon.replace('./', '')
+                if os.path.exists(icon_path):
+                    return icon_path
+            # Check if it's a valid URL or external path
+            elif self.feature.icon.startswith('http') or self.feature.icon.startswith('https'):
+                return self.feature.icon
+            # Check if it's a relative path that exists
+            elif os.path.exists(self.feature.icon):
+                return self.feature.icon
+        
+        # Fallback to keyword matching based on feature name
         name = self.feature.name.lower()
-        icon_path_lower = icon_path.lower() if icon_path else ''
+        icon_path_lower = self.feature.icon.lower() if self.feature.icon else ''
         for keyword, icon_file in self.ICON_KEYWORDS.items():
             if keyword in name or keyword in icon_path_lower:
                 return f'resources/icons/{icon_file}'
