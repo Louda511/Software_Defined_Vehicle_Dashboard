@@ -9,6 +9,7 @@ import requests
 import os
 import base64
 import re
+import hashlib
 from urllib.parse import urlparse
 
 def decode_and_save_base64_image(base64_data: str, cache_dir: str = 'resources/cache') -> str:
@@ -27,8 +28,8 @@ def decode_and_save_base64_image(base64_data: str, cache_dir: str = 'resources/c
         
         image_type, base64_string = match.groups()
         
-        # Generate a unique filename based on the content hash
-        content_hash = str(hash(base64_string))[:8]
+        # Generate a unique filename based on the content hash using MD5
+        content_hash = hashlib.md5(base64_string.encode('utf-8')).hexdigest()[:8]
         filename = f"base64_{content_hash}.{image_type}"
         cache_path = os.path.join(cache_dir, filename)
         
@@ -52,11 +53,16 @@ def download_and_cache_image(url: str, cache_dir: str = 'resources/cache') -> st
         # Create cache directory if it doesn't exist
         os.makedirs(cache_dir, exist_ok=True)
         
-        # Generate cache filename from URL
+        # Generate cache filename from URL using MD5 hash for consistency
+        url_hash = hashlib.md5(url.encode('utf-8')).hexdigest()[:8]
         parsed_url = urlparse(url)
         filename = os.path.basename(parsed_url.path)
         if not filename or '.' not in filename:
-            filename = f"cached_{hash(url)}.png"
+            filename = f"cached_{url_hash}.png"
+        else:
+            # Keep original extension but use hash for uniqueness
+            name, ext = os.path.splitext(filename)
+            filename = f"{name}_{url_hash}{ext}"
         
         cache_path = os.path.join(cache_dir, filename)
         

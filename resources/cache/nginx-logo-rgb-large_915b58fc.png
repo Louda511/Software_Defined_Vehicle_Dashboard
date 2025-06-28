@@ -77,8 +77,8 @@
     
     
     <script>
-            window.digitalData = {"page":{"pageInfo":{"pageName":"www:f5.com:go:product:welcome-to-nginx","destinationUrl":"https://www.f5.com/go/product/welcome-to-nginx.html","subDomain":"www","referringUrl":"","referringPageName":"","language":"en_US","version":""},"category":{"primaryCategory":"go","subCategory1":"product","subCategory2":"welcome-to-nginx","subCategory3":""}}};
-            window.utag_data = {"page.pageInfo.pageName":"www:f5.com:go:product:welcome-to-nginx","page.pageInfo.destinationUrl":"https://www.f5.com/go/product/welcome-to-nginx.html","page.pageInfo.subDomain":"www","page.pageInfo.referringUrl":"","page.pageInfo.referringPageName":"","page.pageInfo.language":"en_US","page.pageInfo.version":"","page.category.primaryCategory":"go","page.category.subCategory1":"product","page.category.subCategory2":"welcome-to-nginx","page.category.subCategory3":""};
+            window.digitalData = {"page":{"pageInfo":{"pageName":"www:f5.com:go:product:welcome-to-nginx","destinationUrl":"https://www.f5.com/go/product/welcome-to-nginx.html","subDomain":"www","referringUrl":"https://www.nginx.com/","referringPageName":"","language":"en_US","version":""},"category":{"primaryCategory":"go","subCategory1":"product","subCategory2":"welcome-to-nginx","subCategory3":""}}};
+            window.utag_data = {"page.pageInfo.pageName":"www:f5.com:go:product:welcome-to-nginx","page.pageInfo.destinationUrl":"https://www.f5.com/go/product/welcome-to-nginx.html","page.pageInfo.subDomain":"www","page.pageInfo.referringUrl":"https://www.nginx.com/","page.pageInfo.referringPageName":"","page.pageInfo.language":"en_US","page.pageInfo.version":"","page.category.primaryCategory":"go","page.category.subCategory1":"product","page.category.subCategory2":"welcome-to-nginx","page.category.subCategory3":""};
     </script>
 
 <style>
@@ -474,7 +474,7 @@
 
                     <li>
                         
-                        <a data-aa="c:view,t:main-nav" class="main-nav__link font-icon font-icon-chevron-down main-nav__frame-content-link" href="/solutions" aria-expanded="false" data-target="mega-nav-panel--2027983602" data-moddate="1751108037326">
+                        <a data-aa="c:view,t:main-nav" class="main-nav__link font-icon font-icon-chevron-down main-nav__frame-content-link" href="/solutions" aria-expanded="false" data-target="mega-nav-panel--2027983602" data-moddate="1751109227783">
                             <span class="main-nav__link-text">Solutions</span>
                         </a>
                     </li>
@@ -491,7 +491,7 @@
 
                     <li>
                         
-                        <a data-aa="c:view,t:main-nav" class="main-nav__link font-icon font-icon-chevron-down main-nav__frame-content-link" href="/products" aria-expanded="false" data-target="mega-nav-panel---1810952386" data-moddate="1751108037328">
+                        <a data-aa="c:view,t:main-nav" class="main-nav__link font-icon font-icon-chevron-down main-nav__frame-content-link" href="/products" aria-expanded="false" data-target="mega-nav-panel---1810952386" data-moddate="1751109227784">
                             <span class="main-nav__link-text">Products</span>
                         </a>
                     </li>
@@ -525,7 +525,7 @@
 
                     <li>
                         
-                        <a data-aa="c:view,t:main-nav" class="main-nav__link font-icon font-icon-chevron-down main-nav__frame-content-link" href="/services/resources" aria-expanded="false" data-target="mega-nav-panel--2078815869" data-moddate="1751108037331">
+                        <a data-aa="c:view,t:main-nav" class="main-nav__link font-icon font-icon-chevron-down main-nav__frame-content-link" href="/services/resources" aria-expanded="false" data-target="mega-nav-panel--2078815869" data-moddate="1751109227787">
                             <span class="main-nav__link-text">Resources</span>
                         </a>
                     </li>
@@ -586,7 +586,7 @@
                 
                 <ul class="utility-nav" id="utility-nav">
                     <li class="utility-nav__item search-item">
-                        <div class="CoveoOmnibox search-bar is-closed" id="search-bar" tabindex="-1" data-coveo-token="eyJhbGciOiJIUzI1NiJ9.eyJzZWFyY2hIdWIiOiJmNWNvbSIsInY4Ijp0cnVlLCJ0b2tlbklkIjoicWh2dWdvaHhpMjVwYmgya3RuZ2dzaXNwNXEiLCJvcmdhbml6YXRpb24iOiJmNW5ldHdvcmtzcHJvZHVjdGlvbjV2a2huMDBoIiwidXNlcklkcyI6W3sidHlwZSI6IlVzZXIiLCJuYW1lIjoiYW5vbnltb3VzIiwicHJvdmlkZXIiOiJFbWFpbCBTZWN1cml0eSBQcm92aWRlciJ9LHsidHlwZSI6IlVzZXIiLCJuYW1lIjoiY29tbXVuaXR5Lmd1ZXN0dXNlckBmNS5jb20iLCJwcm92aWRlciI6IkVtYWlsIFNlY3VyaXR5IFByb3ZpZGVyIn1dLCJyb2xlcyI6WyJxdWVyeUV4ZWN1dG9yIl0sImlzcyI6IlNlYXJjaEFwaSIsImV4cCI6MTc1MTEwODkzNywiaWF0IjoxNzUxMTA4MDM3fQ.GGKysNKMRLmZ2Z_X_nqiFHHrQ02QLa2uh5vVmW0JkCM" data-search-page-path="/content/f5-com/en_us/search.html" data-lang="en" data-organization-id="f5networksproduction5vkhn00h" data-search-hub="f5com">
+                        <div class="CoveoOmnibox search-bar is-closed" id="search-bar" tabindex="-1" data-coveo-token="eyJhbGciOiJIUzI1NiJ9.eyJzZWFyY2hIdWIiOiJmNWNvbSIsInY4Ijp0cnVlLCJ0b2tlbklkIjoicnphaGF2MmIzanBoemNvand3NnZ1N3NmNHkiLCJvcmdhbml6YXRpb24iOiJmNW5ldHdvcmtzcHJvZHVjdGlvbjV2a2huMDBoIiwidXNlcklkcyI6W3sidHlwZSI6IlVzZXIiLCJuYW1lIjoiYW5vbnltb3VzIiwicHJvdmlkZXIiOiJFbWFpbCBTZWN1cml0eSBQcm92aWRlciJ9LHsidHlwZSI6IlVzZXIiLCJuYW1lIjoiY29tbXVuaXR5Lmd1ZXN0dXNlckBmNS5jb20iLCJwcm92aWRlciI6IkVtYWlsIFNlY3VyaXR5IFByb3ZpZGVyIn1dLCJyb2xlcyI6WyJxdWVyeUV4ZWN1dG9yIl0sImlzcyI6IlNlYXJjaEFwaSIsImV4cCI6MTc1MTExMDEyNywiaWF0IjoxNzUxMTA5MjI3fQ.SREjV47dOam3IzEDc7R4guF2shfaixUKnzdOd0Si7qM" data-search-page-path="/content/f5-com/en_us/search.html" data-lang="en" data-organization-id="f5networksproduction5vkhn00h" data-search-hub="f5com">
                             <div class="CoveoAnalytics" data-anonymous="true" data-search-hub="f5com"></div>
                             <div class="search-bar__controls">
                                 <input type="text" spellcheck="false" role="combobox" autocomplete="off" aria-autocomplete="list" title="Insert a query. Press enter to send" aria-label="Search all F5 sites" placeholder="Search all F5 sites" class="search-bar__input"/>
