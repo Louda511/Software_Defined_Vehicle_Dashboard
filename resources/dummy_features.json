@@ -2,49 +2,49 @@
     {
         "name": "user-activity-api",
         "location": "abdelrahmanelbadawy1/user-activity-api",
-        "description": "API service for tracking user activity and behavior patterns.",
+        "description": "API service for tracking user activity and behavior patterns. Provides comprehensive analytics and insights into user interactions with the ADAS system, enabling data-driven improvements and personalized experiences.",
         "icon": "data:image/png;base64,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"
     },
     {
         "name": "user-activity-consumer",
         "location": "abdelrahmanelbadawy1/user-activity-consumer",
-        "description": "Consumer service for processing user activity data.",
+        "description": "Consumer service for processing user activity data. Handles real-time data streams, performs analytics processing, and generates actionable insights for system optimization and user experience improvements.",
         "icon": "resources/icons/adaptive-cruise.svg"
     },
     {
         "name": "My Test Web App",
         "location": "abdelrahmanelbadawy1/my-test-app",
-        "description": "This is a simple test web server running on Nginx.",
+        "description": "This is a simple test web server running on Nginx. Demonstrates basic web hosting capabilities and serves as a foundation for more complex web applications within the ADAS ecosystem.",
         "icon": "https://www.nginx.com/wp-content/uploads/2018/08/nginx-logo-rgb-large.png"
     },
     {
         "name": "Lane Detection System",
         "location": "adas/lane-detection",
-        "description": "Advanced lane detection and tracking system for autonomous driving.",
+        "description": "Advanced lane detection and tracking system for autonomous driving. Utilizes computer vision algorithms to identify lane markings, predict vehicle trajectory, and provide real-time feedback for safe navigation.",
         "icon": "resources/icons/lane.svg"
     },
     {
         "name": "Cruise Control Module",
         "location": "adas/cruise-control",
-        "description": "Intelligent cruise control system with speed adaptation.",
+        "description": "Intelligent cruise control system with speed adaptation. Automatically adjusts vehicle speed based on traffic conditions, maintains safe following distances, and integrates with other ADAS features for enhanced safety.",
         "icon": "resources/icons/cruise.svg"
     },
     {
         "name": "Emergency Brake System",
         "location": "adas/emergency-brake",
-        "description": "Automatic emergency braking system for collision prevention.",
+        "description": "Automatic emergency braking system for collision prevention. Monitors the road ahead using sensors and cameras, automatically applies brakes when potential collisions are detected to minimize impact severity.",
         "icon": "resources/icons/brake.svg"
     },
     {
         "name": "Weather Service",
         "location": "adas/weather-service",
-        "description": "Real-time weather data integration for driving conditions.",
+        "description": "Real-time weather data integration for driving conditions. Provides current weather information, forecasts, and road condition alerts to help drivers make informed decisions and adjust driving behavior accordingly.",
         "icon": "resources/icons/weather-clear.svg"
     },
     {
         "name": "Voice Assistant",
         "location": "adas/voice-assistant",
-        "description": "Voice-controlled assistant for hands-free operation.",
+        "description": "Voice-controlled assistant for hands-free operation. Enables drivers to control various vehicle functions, access information, and interact with the ADAS system using natural language commands without taking hands off the wheel.",
         "icon": "resources/icons/hello.svg"
     }
 ]

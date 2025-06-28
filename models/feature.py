@@ -29,7 +29,16 @@ class Feature:
         # Split description into short and long versions
         parts = description.split('.', 1)
         short_desc = parts[0] + '.' if len(parts) > 0 else description
-        long_desc = description
+        
+        # Long description should be the remaining content after the first sentence
+        if len(parts) > 1:
+            long_desc = parts[1].strip()
+            # Remove leading period if present
+            if long_desc.startswith('.'):
+                long_desc = long_desc[1:].strip()
+        else:
+            # If there's only one sentence, use a generic long description
+            long_desc = "This feature provides essential functionality for the ADAS system."
         
         return cls(
             name=data.get('name', ''),
