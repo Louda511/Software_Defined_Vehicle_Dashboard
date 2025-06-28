@@ -6,13 +6,13 @@ ENV PYTHONUNBUFFERED=1
 ENV DISPLAY=:0
 ENV QT_X11_NO_MITSHM=1
 
-# Allow for a PODMAN_SOCKET_PATH environment variable (default to user socket for rootless Podman)
-ENV PODMAN_SOCKET_PATH=/run/user/1000/podman/podman.sock
+# PODMAN_SOCKET_PATH will be set at runtime via docker-compose or run-container.sh
+# This allows for dynamic user ID detection
 
 # Optionally, you can document in the Dockerfile how to mount the socket when running the container:
 # Example:
-#   podman run -v /run/user/1000/podman/podman.sock:/run/user/1000/podman/podman.sock:rw \
-#     -e PODMAN_SOCKET_PATH=/run/user/1000/podman/podman.sock ...
+#   podman run -v /run/user/$(id -u)/podman/podman.sock:/run/user/$(id -u)/podman/podman.sock:rw \
+#     -e PODMAN_SOCKET_PATH=/run/user/$(id -u)/podman/podman.sock ...
 
 # Install system dependencies for PyQt6 and X11
 RUN apt-get update && apt-get install -y \

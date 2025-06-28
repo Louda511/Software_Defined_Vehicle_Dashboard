@@ -83,13 +83,26 @@ verify_socket() {
     # Wait a moment for socket to be ready
     sleep 2
     
-    USER_SOCKET="/run/user/$(id -u)/podman/podman.sock"
+    CURRENT_UID=$(id -u)
+    USER_SOCKET="/run/user/$CURRENT_UID/podman/podman.sock"
+    
+    echo -e "${BLUE}Current user ID: $CURRENT_UID${NC}"
+    echo -e "${BLUE}Expected socket: $USER_SOCKET${NC}"
     
     if [ -S "$USER_SOCKET" ]; then
         echo -e "${GREEN}✓ User socket found: $USER_SOCKET${NC}"
     else
         echo -e "${RED}✗ User Podman socket not found at $USER_SOCKET${NC}"
-        return 1
+        echo -e "${YELLOW}Trying to restart user Podman service...${NC}"
+        systemctl --user restart podman.socket
+        sleep 3
+        
+        if [ -S "$USER_SOCKET" ]; then
+            echo -e "${GREEN}✓ User socket found after restart: $USER_SOCKET${NC}"
+        else
+            echo -e "${RED}✗ User Podman socket still not available${NC}"
+            return 1
+        fi
     fi
     
     # Test socket connectivity
@@ -106,18 +119,30 @@ show_status() {
     echo -e "${BLUE}User Podman Service Status:${NC}"
     echo "================================"
     
+    CURRENT_UID=$(id -u)
+    echo -e "${BLUE}Current user ID: $CURRENT_UID${NC}"
+    echo
+    
     echo -e "${YELLOW}User services:${NC}"
     systemctl --user status podman.socket --no-pager -l || true
     echo
     systemctl --user status podman --no-pager -l || true
     
     echo -e "${YELLOW}User socket:${NC}"
-    USER_SOCKET="/run/user/$(id -u)/podman/podman.sock"
+    USER_SOCKET="/run/user/$CURRENT_UID/podman/podman.sock"
     if [ -S "$USER_SOCKET" ]; then
         echo -e "${GREEN}  $USER_SOCKET${NC}"
+        echo -e "${GREEN}  Socket permissions: $(ls -la $USER_SOCKET)${NC}"
     else
         echo -e "${RED}  Socket not found${NC}"
     fi
+    
+    echo -e "${YELLOW}System-wide sockets (if available):${NC}"
+    for sys_socket in "/run/podman/podman.sock" "/var/run/podman/podman.sock"; do
+        if [ -S "$sys_socket" ]; then
+            echo -e "${GREEN}  $sys_socket${NC}"
+        fi
+    done
 }
 
 # Main execution

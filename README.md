@@ -2,6 +2,64 @@
 
 This project has been refactored into a modular structure for better maintainability and organization.
 
+## Multi-User Support and Dynamic User ID Detection
+
+The application now supports multiple users with automatic user ID detection and dynamic Podman socket path resolution. This eliminates the need for hardcoded user IDs and makes the application work seamlessly across different user accounts.
+
+### Key Improvements
+
+1. **Dynamic User ID Detection**: The application automatically detects the current user's ID using `os.getuid()`
+2. **Automatic Socket Path Detection**: Podman socket paths are automatically detected based on the user's environment
+3. **Multi-User Container Support**: Docker Compose and container scripts now work for any user ID
+4. **Improved Error Handling**: Better error messages with specific solutions for different scenarios
+
+### Socket Detection Priority
+
+The application detects Podman sockets in the following order:
+1. `PODMAN_SOCKET_PATH` environment variable (for containerized use)
+2. `/run/user/{uid}/podman/podman.sock` (user-specific socket)
+3. `/run/podman/podman.sock` (system-wide socket)
+4. `/var/run/podman/podman.sock` (alternative system socket)
+
+### Testing User Detection
+
+Run the test script to verify your setup:
+
+```bash
+python test_user_detection.py
+```
+
+This will show:
+- Your current user ID
+- Available Podman sockets
+- Socket detection status
+
+### Troubleshooting
+
+If you encounter issues with Podman socket detection:
+
+1. **For user-level Podman**:
+   ```bash
+   systemctl --user start podman.socket
+   systemctl --user start podman
+   ```
+
+2. **For system-wide Podman**:
+   ```bash
+   sudo systemctl start podman.socket
+   sudo systemctl start podman
+   ```
+
+3. **Run the setup script**:
+   ```bash
+   ./setup_podman.sh
+   ```
+
+4. **Check socket status**:
+   ```bash
+   ls -la /run/user/$(id -u)/podman/podman.sock
+   ```
+
 ## Project Structure
 
 ```

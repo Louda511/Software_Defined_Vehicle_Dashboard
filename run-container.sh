@@ -26,6 +26,10 @@ if [ -z "$DISPLAY" ]; then
     exit 1
 fi
 
+# Get current user ID for dynamic socket path detection
+CURRENT_UID=$(id -u)
+echo -e "${BLUE}Current user ID: $CURRENT_UID${NC}"
+
 # Detect Podman socket path for maximum portability
 PODMAN_SOCKET=""
 if [ -S "/run/podman/podman.sock" ]; then
@@ -36,15 +40,16 @@ elif [ -S "/var/run/podman/podman.sock" ]; then
     PODMAN_SOCKET="/var/run/podman/podman.sock"
     CONTAINER_SOCKET="/run/podman/podman.sock"
     echo -e "${GREEN}Using alternative system Podman socket: $PODMAN_SOCKET${NC}"
-elif [ -S "/run/user/$(id -u)/podman/podman.sock" ]; then
-    PODMAN_SOCKET="/run/user/$(id -u)/podman/podman.sock"
-    CONTAINER_SOCKET="/run/user/$(id -u)/podman/podman.sock"
+elif [ -S "/run/user/$CURRENT_UID/podman/podman.sock" ]; then
+    PODMAN_SOCKET="/run/user/$CURRENT_UID/podman/podman.sock"
+    CONTAINER_SOCKET="/run/user/$CURRENT_UID/podman/podman.sock"
     echo -e "${YELLOW}Using user Podman socket: $PODMAN_SOCKET${NC}"
 else
     echo -e "${RED}Error: No Podman socket found. Please ensure Podman service is running.${NC}"
     echo "Available options:"
     echo "  - Start system-wide Podman service: sudo systemctl start podman.socket"
     echo "  - Start user Podman service: systemctl --user start podman.socket"
+    echo "  - Run setup script: ./setup_podman.sh"
     exit 1
 fi
 

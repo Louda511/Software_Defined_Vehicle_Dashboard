@@ -7,9 +7,11 @@ services:
     environment:
       - DISPLAY=${DISPLAY}
       - QT_X11_NO_MITSHM=1
+      - PODMAN_SOCKET_PATH=/run/user/${UID:-1000}/podman/podman.sock
     volumes:
       - /tmp/.X11-unix:/tmp/.X11-unix:rw
       - .:/app
+      - /run/user/${UID:-1000}/podman/podman.sock:/run/user/${UID:-1000}/podman/podman.sock:rw
     network_mode: host
     privileged: false
     restart: unless-stopped

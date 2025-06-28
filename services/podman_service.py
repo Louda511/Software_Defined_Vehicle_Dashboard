@@ -19,8 +19,11 @@ def get_podman_socket_path():
     if env_path:
         return f'unix://{env_path}'
     
-    # Fallback to common paths (only check if we're on host)
-    user_sock = f'/run/user/{os.getuid()}/podman/podman.sock'
+    # Get current user ID for dynamic socket path detection
+    current_uid = os.getuid()
+    
+    # Check user-specific socket first (most common for rootless Podman)
+    user_sock = f'/run/user/{current_uid}/podman/podman.sock'
     if os.path.exists(user_sock):
         return f'unix://{user_sock}'
     
@@ -32,6 +35,7 @@ def get_podman_socket_path():
         if os.path.exists(path):
             return f'unix://{path}'
     
+    # If no socket found, return None and let the caller handle the error
     return None
 
 class PodmanWorker(QThread):
@@ -53,7 +57,21 @@ class PodmanWorker(QThread):
         try:
             socket_path = get_podman_socket_path()
             if not socket_path:
-                self.status_update.emit('No Podman socket found. Set PODMAN_SOCKET_PATH or ensure Podman is running.')
+                current_uid = os.getuid()
+                error_msg = f"""No Podman socket found for user {current_uid}.
+
+Available solutions:
+1. For user-level Podman: systemctl --user start podman.socket
+2. For system-wide Podman: sudo systemctl start podman.socket  
+3. Run setup script: ./setup_podman.sh
+4. Set PODMAN_SOCKET_PATH environment variable
+
+Expected socket locations:
+- /run/user/{current_uid}/podman/podman.sock (user socket)
+- /run/podman/podman.sock (system socket)
+- /var/run/podman/podman.sock (alternative system socket)"""
+                
+                self.status_update.emit(error_msg)
                 self.finished.emit(False, 'Podman socket not available')
                 return
 
