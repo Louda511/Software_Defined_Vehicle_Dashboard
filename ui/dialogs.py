@@ -268,8 +268,8 @@ class DownloadInstallDialog(QDialog):
         # Use a modern checkmark icon and tint it green
         check_icon_path = 'resources/icons/checkmark.svg'
         if os.path.exists(check_icon_path):
-            pixmap = self.colorize_svg_icon(check_icon_path, theme_manager.theme['success'])
-            self.result_icon.setPixmap(pixmap)
+            pixmap = QPixmap(check_icon_path)
+            self.result_icon.setPixmap(pixmap.scaled(48, 48, Qt.AspectRatioMode.KeepAspectRatio, Qt.TransformationMode.SmoothTransformation))
         else:
             self.result_icon.setPixmap(get_themed_icon('resources/icons/hello.svg').pixmap(48, 48))
         

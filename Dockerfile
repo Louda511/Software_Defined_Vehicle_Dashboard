@@ -1,18 +1,14 @@
 # Use Python 3.12 slim image as base
 FROM python:3.12-slim
 
+# Build arguments for dynamic user
+ARG USER_ID=1000
+ARG GROUP_ID=1000
+
 # Set environment variables
 ENV PYTHONUNBUFFERED=1
 ENV DISPLAY=:0
 ENV QT_X11_NO_MITSHM=1
-
-# Allow for a PODMAN_SOCKET_PATH environment variable (default to user socket for rootless Podman)
-ENV PODMAN_SOCKET_PATH=/run/user/1000/podman/podman.sock
-
-# Optionally, you can document in the Dockerfile how to mount the socket when running the container:
-# Example:
-#   podman run -v /run/user/1000/podman/podman.sock:/run/user/1000/podman/podman.sock:rw \
-#     -e PODMAN_SOCKET_PATH=/run/user/1000/podman/podman.sock ...
 
 # Install system dependencies for PyQt6 and X11
 RUN apt-get update && apt-get install -y \
@@ -77,13 +73,20 @@ RUN pip install --no-cache-dir pytz
 # Copy resources directory into container (will be container-local, not mounted from host)
 COPY resources/ ./resources/
 
-# Create a non-root user with UID 1000 for proper UID mapping
-RUN useradd -m -u 1000 appuser && chown -R appuser:appuser /app
+# Add entrypoint script
+COPY entrypoint.sh /entrypoint.sh
+RUN chmod +x /entrypoint.sh
+
+# Create group and user with dynamic UID/GID
+RUN groupadd -g $GROUP_ID appgroup && \
+    useradd -m -u $USER_ID -g $GROUP_ID appuser && \
+    chown -R appuser:appgroup /app
 
 USER appuser
 
 # Expose port (if needed for future web interface)
 EXPOSE 8080
 
-# Set the default command
+# Use entrypoint for dynamic env/user setup
+ENTRYPOINT ["/entrypoint.sh"]
 CMD ["python", "main.py"] 

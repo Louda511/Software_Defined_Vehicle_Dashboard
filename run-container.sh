@@ -54,10 +54,11 @@ xhost +local:docker 2>/dev/null || xhost +local: 2>/dev/null
 
 # Build the container image (only if not exists or code changed)
 echo -e "${YELLOW}Building container image...${NC}"
-podman build -t adas-dashboard .
+podman build --build-arg USER_ID=$(id -u) --build-arg GROUP_ID=$(id -g) -t adas-dashboard .
 
 # Run the container with UID mapping for secure socket and file access
 # Mount only code files, not resources (JSON files will be container-local)
+# The entrypoint script inside the container will set PODMAN_SOCKET_PATH dynamically if not set
 echo -e "${YELLOW}Starting ADAS Dashboard...${NC}"
 podman run --rm \
     --name adas-dashboard \

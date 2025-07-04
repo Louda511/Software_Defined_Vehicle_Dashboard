@@ -1,26 +1,37 @@
 [
     {
-        "name": "Lane Keep Assist",
-        "icon": "resources/icons/road.svg",
-        "description": "Keeps your car in lane. Keeps your car in lane Lane Keep Assist uses cameras to detect lane markings and gently steers the car to keep it centered in the lane.",
-        "location": "https://hub.docker.com/r/example/lane-keep-assist"
+        "name": "Drowsiness Detection",
+        "icon": "resources/icons/sleepy-driver.svg",
+        "description": "Drowsiness Detection monitors the driver for signs of fatigue or sleepiness using camera and sensor data. If the system detects drowsy behavior, such as frequent blinking or head nodding, it issues an alert to encourage the driver to take a break. This feature helps prevent accidents caused by tiredness and keeps everyone on the road safer.",
+        "location": "https://hub.docker.com/r/example/drowsiness-detection"
     },
     {
-        "name": "Adaptive Cruise Control",
-        "icon": "resources/icons/adaptive-cruise.svg",
-        "description": "Automatic speed & distance. Adaptive Cruise Control automatically adjusts your speed to maintain a safe distance from vehicles ahead.",
-        "location": "https://hub.docker.com/r/example/adaptive-cruise-control"
+        "name": "Distraction Detection",
+        "icon": "resources/icons/distracted.svg",
+        "description": "Distraction Detection uses advanced algorithms and cameras to monitor the driver's attention and focus. If the system detects that the driver is looking away from the road or is otherwise distracted, it provides a warning to help refocus attention. This feature is designed to reduce the risk of accidents caused by distracted driving and improve overall road safety.",
+        "location": "https://hub.docker.com/r/example/distraction-detection"
     },
+    
+    {
+        "name": "Lane Keep Assist",
+        "icon": "resources/icons/road.svg",
+        "description": "Lane Keep Assist is an advanced driver assistance feature that helps prevent unintentional lane departures. Using onboard cameras to monitor road lane markings, the system gently steers the vehicle back into the center of the lane if it detects drifting without a turn signal. This reduces the risk of accidents caused by drowsiness or distraction, making highway driving safer and less stressful.",
+        "location": "https://hub.docker.com/r/example/lane-keep-assist"
+    },
+
     {
         "name": "Automatic Emergency Braking",
         "icon": "resources/icons/disc-brake-car.svg",
-        "description": "Brakes in emergencies. Automatic Emergency Braking detects imminent collisions and applies the brakes to prevent or reduce impact.",
+        "description": "Automatic Emergency Braking (AEB) is a critical safety system that helps prevent or mitigate collisions. The system continuously monitors the road ahead using sensors and cameras. If it detects an imminent collision with another vehicle, pedestrian, or obstacle, AEB automatically applies the brakes to reduce speed or stop the car. This rapid response can significantly reduce the severity of accidents or even avoid them altogether, providing peace of mind for drivers and passengers.",
         "location": "https://hub.docker.com/r/example/automatic-emergency-braking"
     },
+    
     {
-        "name": "Alpine Linux",
-        "icon": "resources/icons/7196914.SVG",
-        "description": "The simplest Docker container. This is the official Docker hello-world image. It is used to verify that Docker is installed and working correctly.",
-        "location": "https://hub.docker.com/_/alpine"
+        "name": "Adaptive Cruise Control",
+        "icon": "resources/icons/adaptive-cruise.svg",
+        "description": "Adaptive Cruise Control (ACC) takes traditional cruise control to the next level by automatically adjusting your car's speed to maintain a safe following distance from the vehicle ahead. Using radar and camera sensors, ACC can slow down, speed up, and even bring your car to a complete stop in traffic. This feature is ideal for long highway journeys, reducing driver fatigue and enhancing comfort and safety in varying traffic conditions.",
+        "location": "https://hub.docker.com/r/example/adaptive-cruise-control"
     }
+
+    
 ] 
