@@ -75,11 +75,11 @@ class DownloadInstallDialog(QDialog):
         layout.setContentsMargins(40, 40, 40, 40)
         
         # Centered Title and Subtitle
-        self.title_label = QLabel(f"Installing {self.image_name}")
+        self.title_label = QLabel("Downloading your feature")
         self.title_label.setObjectName("DownloadTitle")
         self.title_label.setAlignment(Qt.AlignmentFlag.AlignCenter)
         layout.addWidget(self.title_label, alignment=Qt.AlignmentFlag.AlignCenter)
-        self.subtitle_label = QLabel("Setting up your ADAS service...")
+        self.subtitle_label = QLabel("")
         self.subtitle_label.setObjectName("DownloadSubtitle")
         self.subtitle_label.setAlignment(Qt.AlignmentFlag.AlignCenter)
         layout.addWidget(self.subtitle_label, alignment=Qt.AlignmentFlag.AlignCenter)
@@ -98,7 +98,7 @@ class DownloadInstallDialog(QDialog):
         progress_layout.addWidget(self.progress_bar)
         
         # Status message
-        self.status_label = QLabel("Downloading...")
+        self.status_label = QLabel("Downloading your feature")
         self.status_label.setObjectName("StatusLabel")
         self.status_label.setAlignment(Qt.AlignmentFlag.AlignCenter)
         self.status_label.setWordWrap(True)
@@ -240,9 +240,8 @@ class DownloadInstallDialog(QDialog):
         """)
     
     def set_status(self, text: str):
-        """Update the status text - simplified to just show 'Downloading...'"""
-        # Keep it simple - just show "Downloading..." regardless of technical status
-        self.status_label.setText("Downloading...")
+        """Update the status text - always show 'Downloading your feature'"""
+        self.status_label.setText("Downloading your feature")
     
     def colorize_svg_icon(self, svg_path, color, size=48):
         """Load an SVG icon and tint it with the given color, returning a QPixmap."""
