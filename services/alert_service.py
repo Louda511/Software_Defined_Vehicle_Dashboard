@@ -39,17 +39,12 @@ class AlertService(QObject):
         self.dialog = None
         self.last_warning_keys = set()
         
-        self.debounce_timer = QTimer()
-        self.debounce_timer.setSingleShot(True)
-        self.debounce_timer.timeout.connect(self.update_alert)
-        
         # Initial check
         self.update_alert()
 
     def on_file_changed(self, path: str):
-        """Debounce file changes to avoid rapid firing."""
-        # Debounce: wait 50ms before reading the file
-        self.debounce_timer.start(50)
+        """Immediately update alert on file change (no debounce)."""
+        self.update_alert()
 
     def update_alert(self):
         """Check for active alerts and show/hide the dialog."""

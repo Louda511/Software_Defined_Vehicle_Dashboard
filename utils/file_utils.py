@@ -5,6 +5,7 @@ import json
 import os
 from typing import List, Set
 from models.feature import Feature
+import sqlite3
 
 INSTALLED_FILE = 'resources/installed_images.json'
 
@@ -27,16 +28,32 @@ def save_installed_images(installed_set: Set[str]) -> None:
 
 
 def load_features() -> List[Feature]:
-    """Load features from JSON file and convert to Feature objects"""
-    with open('resources/dummy_features.json', 'r') as f:
-        data = json.load(f)
-        return [Feature.from_dict(feature_data) for feature_data in data]
+    """Load features from SQLite database and convert to Feature objects"""
+    conn = sqlite3.connect('resources/data.db')
+    cursor = conn.cursor()
+    cursor.execute('SELECT id, name, icon, description, location FROM features')
+    rows = cursor.fetchall()
+    conn.close()
+    features = []
+    for row in rows:
+        feature_data = {
+            'name': row[1],
+            'icon': row[2],
+            'description': row[3],
+            'location': row[4]
+        }
+        features.append(Feature.from_dict(feature_data))
+    return features
 
 
 def extract_image_name(url: str) -> str:
     """Extracts the image name from various Docker Hub URL formats."""
     if not url:
         return ""
+    
+    # Handle registry URLs with user namespaces (e.g., docker.io/user/image)
+    if url.startswith('docker.io/') and url.count('/') >= 2:
+        return url  # Return full image name like "docker.io/ahmedkhaledd1/distraction-detection"
     
     # Handle URLs like https://hub.docker.com/_/hello-world
     if '/_/' in url:

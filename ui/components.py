@@ -131,7 +131,6 @@ class FeatureCard(QFrame):
             return
             
         main_window = self.window()
-        main_window.hide()
         
         dialog = DownloadInstallDialog(self.feature.image_name, main_window)
         

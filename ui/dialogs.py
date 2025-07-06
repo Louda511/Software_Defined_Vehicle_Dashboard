@@ -322,7 +322,6 @@ class DownloadInstallDialog(QDialog):
             else:
                 self.show_error(f"Installation failed: {msg}")
             
-            main_window.show()
             if on_finish_callback:
                 on_finish_callback(success)
         
